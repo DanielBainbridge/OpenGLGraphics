@@ -25,6 +25,9 @@
     <ClCompile Include="Utility.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="ShaderProgram.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -34,6 +37,12 @@
       <Filter>glad</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderProgram.h">
       <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
