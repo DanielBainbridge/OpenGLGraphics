@@ -2,7 +2,7 @@
 #include "Utility.h"
 #include <glm.hpp>
 #include <iostream>
-
+#include "ShaderProgram.h"
 
 int main() {
 
@@ -10,6 +10,7 @@ int main() {
 	float deltaTime = 0;
 	float lastTime = 0;
 	
+	//make window
 	GLFWwindow* window;
 	if (!glfwInit())
 		return -1;
@@ -25,14 +26,48 @@ int main() {
 	if (!gladLoadGL())
 		return -1;
 
-	std::cout << LoadFileAsString("printThis.txt") << std::endl;
+	ShaderProgram* simpleShader = new ShaderProgram();
+	simpleShader->LoadFromFiles("SimpleShader.vert", "SimpleShader.frag");
+
+	GLuint bufferID;
+
+	glGenBuffers(1, &bufferID);
+
+	float someFloats[]{
+		0,0,
+		0,1,
+		1,0
+	};
+	
+	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(someFloats), someFloats, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	glEnableVertexAttribArray(0);
+
 
 	float incrementer = 0;
 	float shittyRedValue = 0;
 	float shittyBlueValue = 0;
 	float shittyGreenValue = 0;
+
+
+	//loop
 	while (!glfwWindowShouldClose(window)) {
 		glClear(GL_COLOR_BUFFER_BIT);
+
+		glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+		simpleShader->Enable();
+		simpleShader->SetFloatUniform("setFloat", sin(currentTime));
+
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
 
 		currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;

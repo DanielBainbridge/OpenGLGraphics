@@ -52,7 +52,37 @@ void ShaderProgram::LoadFromFiles(std::string vertexShaderFName, std::string fra
 		std::cout << "Fragment Shader Successful" << std::endl;
 
 
+	//link shader to itself
+	glAttachShader(shaderProgramID, fragmentShaderID);
+	glAttachShader(shaderProgramID, vertexShaderID);
+	glLinkProgram(shaderProgramID);
 
-	const char* fragmentSourceC = fragmentSource.c_str();
+	glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &successStatus);
 
+	//check if successfully linked
+	if (successStatus == GL_FALSE) {
+		std::cout << "Shader link failed" << std::endl;
+		glGetProgramInfoLog(shaderProgramID, 512, nullptr, errorLog);
+		std::cout << errorLog << std::endl;
+		loadedSuccessfully = false;
+	}
+
+	//shader loaded with no errors
+	if (loadedSuccessfully) {
+		std::cout << "Shader loaded properly!" << std::endl;
+	}
+
+
+
+}
+
+void ShaderProgram::Enable()
+{
+	glUseProgram(shaderProgramID);
+}
+
+void ShaderProgram::SetFloatUniform(std::string variableName, float value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform1f(varLoc, value);
 }
