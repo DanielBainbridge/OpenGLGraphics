@@ -52,7 +52,7 @@ void ShaderProgram::LoadFromFiles(std::string vertexShaderFName, std::string fra
 		std::cout << "Fragment Shader Successful" << std::endl;
 
 
-	//link shader to itself
+	//link shader to itself and to the program
 	glAttachShader(shaderProgramID, fragmentShaderID);
 	glAttachShader(shaderProgramID, vertexShaderID);
 	glLinkProgram(shaderProgramID);
@@ -85,4 +85,11 @@ void ShaderProgram::SetFloatUniform(std::string variableName, float value)
 {
 	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
 	glUniform1f(varLoc, value);
+}
+
+void ShaderProgram::SetMatrixUniform(std::string variableName, glm::mat4 value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+
+	glUniformMatrix4fv(varLoc, 1, GL_FALSE, &value[0][0]);
 }

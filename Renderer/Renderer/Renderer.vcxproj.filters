@@ -14,6 +14,9 @@
     <Filter Include="ProgramEntry">
       <UniqueIdentifier>{7ad3bd0b-0161-4ae9-99b4-b4bc0f13a877}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Mesh">
+      <UniqueIdentifier>{3e407648-f1e6-47ee-a4cc-4b0eba738405}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -27,6 +30,9 @@
     </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
       <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Mesh</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
