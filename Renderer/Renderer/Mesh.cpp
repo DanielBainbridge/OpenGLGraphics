@@ -1,4 +1,6 @@
 #include "Mesh.h"
+#include <assimp/scene.h>
+#include <assimp/cimport.h>
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -100,4 +102,12 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glBindVertexArray(0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void Mesh::InitialiseFromFile(std::string filename)
+{
+	const aiScene* scene = aiImportFile(filename.c_str(), 0);
+
+	aiMesh* mesh = scene->mMeshes[0];
+
 }

@@ -2,7 +2,7 @@
 #include "Utility.h"
 #include <iostream>
 #include "ShaderProgram.h"
-#include "Mesh.h"
+//#include "Mesh.h"
 
 int main() {
 
