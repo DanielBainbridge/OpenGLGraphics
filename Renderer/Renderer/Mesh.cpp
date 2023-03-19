@@ -106,8 +106,40 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 void Mesh::InitialiseFromFile(std::string filename)
 {
+	//read vertices from model
 	const aiScene* scene = aiImportFile(filename.c_str(), 0);
+	
+	//use first mesh we find
+	aiMesh* mesh = scene->mMeshes[1];
 
-	aiMesh* mesh = scene->mMeshes[0];
+	//extract indicies from first mesh
+	int numFaces = mesh->mNumFaces;
+	std::vector<unsigned int> indices;
 
+	for (int i = 0; i < numFaces; i++)
+	{
+		//generate triangle
+		indices.push_back(mesh->mFaces[i].mIndices[0]);
+		indices.push_back(mesh->mFaces[i].mIndices[2]);
+		indices.push_back(mesh->mFaces[i].mIndices[1]);
+
+		//generate second triangle for quads
+		if (mesh->mFaces[i].mNumIndices == 4) {
+			indices.push_back(mesh->mFaces[i].mIndices[0]);
+			indices.push_back(mesh->mFaces[i].mIndices[3]);
+			indices.push_back(mesh->mFaces[i].mIndices[2]);
+		}
+	}
+
+	//extract vertex data
+	int numV = mesh->mNumVertices;
+	Vertex* vertices = new Vertex[numV];
+	for (int i = 0; i < numV; i++)
+	{
+		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
+		//normals and uv's
+	}
+	Initialise(numV, vertices, indices.size(), indices.data());
+
+	delete[] vertices;
 }

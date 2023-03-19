@@ -1,0 +1,22 @@
+#pragma once
+#include "Graphics.h"
+class Camera {
+public:
+	Camera();
+	Camera(float fieldOfView, float nearClipPlane, float farClipPlane);
+	void UpdateCamera(float deltaTime, GLFWwindow window);
+	glm::mat4 GetViewMatrix();
+	glm::mat4 GetProjectionMatrix(float width, float height);
+	inline void SetNearClip(float value) { nearClipPlane = value; };
+	inline void SetFarClip(float value) {farClipPlane = value;};
+	inline void SetFieldOfView(float value) {fieldOfView = value;};
+
+
+private:
+	float fieldOfView;
+	float nearClipPlane;
+	float farClipPlane;
+	float theta;
+	float phi;
+	glm::vec3 position;
+};
