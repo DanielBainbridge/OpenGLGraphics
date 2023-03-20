@@ -1,13 +1,31 @@
-#include "Graphics.h"
+#include "Application.h"
+
 #include "Utility.h"
 #include <iostream>
 #include "ShaderProgram.h"
 #include "Mesh.h"
+#include "Camera.h"
 
 int main() {
 
+	//new Startup to utilise Application class, easy entry point to swap out program
+
+	/*Application newApp;
+
+	newApp.StartUp();
+	while (newApp.Run()) {
+		newApp.Draw();
+	}*/
+
+	//
+
 	Mesh quadMesh;
 	Mesh literallyQuadMesh;
+
+	Camera cam = Camera(90, 0.01f, 10000);
+	cam.SetPosition(glm::vec3(3000, 1800, 3000));
+
+
 	float currentTime = 0;
 	float deltaTime = 0;
 	float lastTime = 0;
@@ -54,20 +72,19 @@ int main() {
 	glEnable(GL_DEBUG_OUTPUT);
 #endif
 
-		quadMesh.InitialiseFromFile("characters\\Pyro\\pyro.fbx");
+		quadMesh.InitialiseFromFile("characters\\Marksman\\Marksman.fbx");
 	//loop
 	while (!glfwWindowShouldClose(window)) {
+
+
 
 		currentTime = (float)glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
 
+		cam.UpdateCamera(deltaTime, window);
 
 		incrementer += deltaTime * 2.0f;
-
-		shittyRedValue = glm::sin(incrementer);
-		shittyBlueValue = glm::cos(-incrementer);
-		shittyGreenValue = glm::sin(-incrementer);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -90,7 +107,8 @@ int main() {
 
 		glm::mat4 projection = glm::perspective(3.14159f / 4.0f, aspect, 1.0f, 10000.0f);
 
-		simpleShader->SetMatrixUniform("transformMatrix", projection * view * rotation);
+		//simpleShader->SetMatrixUniform("transformMatrix", projection * view * rotation);
+		simpleShader->SetMatrixUniform("transformMatrix", cam.GetProjectionMatrix(width, height) * cam.GetViewMatrix() * rotation);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

@@ -1,6 +1,8 @@
 #include "Mesh.h"
 #include <assimp/scene.h>
 #include <assimp/cimport.h>
+#include <assimp/postprocess.h>
+#include <iostream>
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -91,7 +93,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 		//fill vertex buffer
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(unsigned int), indicies, GL_STATIC_DRAW);
-		
+
 		triCount = indexCount / 3;
 	}
 	else {
@@ -107,39 +109,58 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 void Mesh::InitialiseFromFile(std::string filename)
 {
 	//read vertices from model
-	const aiScene* scene = aiImportFile(filename.c_str(), 0);
+	const aiScene* scene = aiImportFile(filename.c_str(), aiProcess_Triangulate);
 	
-	//use first mesh we find
-	aiMesh* mesh = scene->mMeshes[1];
+	//load meshes we find
+	std::vector<aiMesh*> meshes;
+	for (int i = 0; i < scene->mNumMeshes; i++) {
+		meshes.push_back(scene->mMeshes[i]);
+	}
 
-	//extract indicies from first mesh
-	int numFaces = mesh->mNumFaces;
+	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
 
-	for (int i = 0; i < numFaces; i++)
-	{
-		//generate triangle
-		indices.push_back(mesh->mFaces[i].mIndices[0]);
-		indices.push_back(mesh->mFaces[i].mIndices[2]);
-		indices.push_back(mesh->mFaces[i].mIndices[1]);
+	int numV = 0;
+	int numF = 0;
+	int totalVert = 0;
 
-		//generate second triangle for quads
-		if (mesh->mFaces[i].mNumIndices == 4) {
-			indices.push_back(mesh->mFaces[i].mIndices[0]);
-			indices.push_back(mesh->mFaces[i].mIndices[3]);
-			indices.push_back(mesh->mFaces[i].mIndices[2]);
+	for (aiMesh* m : meshes) {
+
+		//check if the mesh type is and skip it if it is a line
+		if (m->mPrimitiveTypes == aiPrimitiveType_LINE) continue;
+
+		//get faces and vertices of the current mesh
+		numF = m->mNumFaces;
+		numV = m->mNumVertices;
+
+
+		for (int i = 0; i < numF; i++)
+		{
+			//generate triangle
+			indices.push_back(m->mFaces[i].mIndices[0] + totalVert);
+			indices.push_back(m->mFaces[i].mIndices[2] + totalVert);
+			indices.push_back(m->mFaces[i].mIndices[1] + totalVert);
+
+			//generate second triangle for quads
+			if (m->mFaces[i].mNumIndices == 4) {
+				indices.push_back(m->mFaces[i].mIndices[0] + totalVert);
+				indices.push_back(m->mFaces[i].mIndices[3] + totalVert);
+				indices.push_back(m->mFaces[i].mIndices[2] + totalVert);
+			}
+		}
+
+		//add to total vert count for initialising size
+		totalVert += numV;
+
+		//extract vertex data
+		for (int j = 0; j < numV; j++)
+		{
+			Vertex vert = Vertex{ glm::vec4(m->mVertices[j].x, m->mVertices[j].y, m->mVertices[j].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
+			vertices.push_back(vert);
+			//normals and uv's				
 		}
 	}
 
-	//extract vertex data
-	int numV = mesh->mNumVertices;
-	Vertex* vertices = new Vertex[numV];
-	for (int i = 0; i < numV; i++)
-	{
-		vertices[i].position = glm::vec4(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z, 1);
-		//normals and uv's
-	}
-	Initialise(numV, vertices, indices.size(), indices.data());
+	Initialise(totalVert, vertices.data(), indices.size(), indices.data());
 
-	delete[] vertices;
 }

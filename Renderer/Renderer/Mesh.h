@@ -14,7 +14,7 @@ public:
 	void InitialiseQuad();
 	virtual void Draw();
 	//takes an array of vertices,a count of vertices
-	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount = 0, unsigned int* indicies = nullptr);
+	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indicies);
 	void InitialiseFromFile(std::string filename);
 
 protected:

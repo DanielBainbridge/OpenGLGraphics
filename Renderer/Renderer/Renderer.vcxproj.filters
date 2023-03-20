@@ -20,6 +20,9 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{b80632a4-5199-48af-ab01-096433ddbf2d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Applications">
+      <UniqueIdentifier>{bd2c898b-67c3-4aa1-8c15-90f1c4b8e563}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -39,6 +42,12 @@
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>ProgramEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="Gizmos.cpp">
+      <Filter>Tools</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +71,15 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>ProgramEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="Gizmos.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshLoading.h">
+      <Filter>Applications</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
