@@ -14,7 +14,8 @@ public:
 	inline void SetPosition(glm::vec3 value) { position = value; };
 
 private:
-	float turnSpeed;
+	float turnSpeed = 0.1;
+	float moveSpeed = 500;
 	float fieldOfView;
 	float nearClipPlane;
 	float farClipPlane;

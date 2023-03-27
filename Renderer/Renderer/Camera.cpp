@@ -14,27 +14,39 @@ void Camera::UpdateCamera(float deltaTime, GLFWwindow* window)
 
 	glm::vec3 forward(cos(phiR) * cos(thetaR), sin(phiR), cos(phiR) * sin(thetaR));
 	glm::vec3 right(-sin(thetaR), 0, cos(thetaR));
-	glm::vec3 up(0, 0, 0);
+	glm::vec3 up(0, 1, 0);
 
 
 	//move position here
 	if (glfwGetKey(window, GLFW_KEY_W)) {
-		position += forward * deltaTime;
+		position += forward * moveSpeed * deltaTime;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A)) {
-		position -= right * deltaTime;
+		position -= right * moveSpeed * deltaTime;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S)) {
-		position -= forward * deltaTime;
+		position -= forward * moveSpeed * deltaTime;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D)) {
-		position += right * deltaTime;
+		position += right * moveSpeed * deltaTime;
 	}
-	//move angle
-	glm::vec2 mouseDelta = Application::get()->GetMouseDelta();
-	theta += turnSpeed * mouseDelta.x;
-	phi -= turnSpeed * mouseDelta.y;
+	if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+		position += up * moveSpeed * deltaTime;
+	}
+	if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL)) {
+		position -= up * moveSpeed * deltaTime;
+	}
 
+	//move angle
+	if (glfwGetMouseButton(window, 1)) {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glm::vec2 mouseDelta = Application::get()->GetMouseDelta();
+		theta += turnSpeed * mouseDelta.x;
+		phi -= turnSpeed * mouseDelta.y;
+	}
+	else {
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 }
 
 glm::mat4 Camera::GetViewMatrix()
@@ -43,10 +55,10 @@ glm::mat4 Camera::GetViewMatrix()
 	float phiRad = glm::radians(phi);
 	glm::vec3 forward(cos(phiRad) * cos(thertaRad), sin(phiRad), cos(phiRad * sin(thertaRad)));
 
-	return glm::lookAt(position, position + forward, glm::vec3(0,1,0));
+	return glm::lookAt(position, position + forward, glm::vec3(0, 1, 0));
 }
 
 glm::mat4 Camera::GetProjectionMatrix(float width, float height)
 {
-	return glm::perspective(fieldOfView, width/height, nearClipPlane, farClipPlane);
+	return glm::perspective(fieldOfView, width / height, nearClipPlane, farClipPlane);
 }

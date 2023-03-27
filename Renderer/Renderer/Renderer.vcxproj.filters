@@ -49,6 +49,12 @@
     <ClCompile Include="Gizmos.cpp">
       <Filter>Tools</Filter>
     </ClCompile>
+    <ClCompile Include="GLFWCallbacks.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshLoading.cpp">
+      <Filter>Applications</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -80,6 +86,9 @@
     </ClInclude>
     <ClInclude Include="MeshLoading.h">
       <Filter>Applications</Filter>
+    </ClInclude>
+    <ClInclude Include="GLFWCallbacks.h">
+      <Filter>Tools</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

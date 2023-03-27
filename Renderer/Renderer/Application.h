@@ -1,5 +1,6 @@
 #pragma once
 #include "Graphics.h"
+#include "ShaderProgram.h"
 class Camera;
 class Application {
 public:
@@ -22,19 +23,17 @@ public:
 
 protected:
 
-
-
-
-
 	static Application* s_instance;
 	GLFWwindow* window;
 	std::string windowName = "Window";
 	int windowWidth = 1280, windowHeight = 720;
-	Camera camera;
 	glm::vec2 mousePosition;
+	Camera* camera;
 
 private:
 	float deltaTime = 0;
 	float lastTime = 0;
 	glm::vec2 lastMousePosition;
+	ShaderProgram shader;
+	GLuint bufferID;
 };

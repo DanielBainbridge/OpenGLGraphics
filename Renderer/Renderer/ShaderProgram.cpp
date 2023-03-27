@@ -72,13 +72,15 @@ void ShaderProgram::LoadFromFiles(std::string vertexShaderFName, std::string fra
 		std::cout << "Shader loaded properly!" << std::endl;
 	}
 
-
-
 }
 
 void ShaderProgram::Enable()
 {
 	glUseProgram(shaderProgramID);
+}
+
+ShaderProgram::~ShaderProgram()
+{
 }
 
 void ShaderProgram::SetFloatUniform(std::string variableName, float value)
