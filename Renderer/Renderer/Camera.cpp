@@ -39,10 +39,11 @@ void Camera::UpdateCamera(float deltaTime, GLFWwindow* window)
 
 	//move angle
 	if (glfwGetMouseButton(window, 1)) {
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glm::vec2 mouseDelta = Application::get()->GetMouseDelta();
 		theta += turnSpeed * mouseDelta.x;
 		phi -= turnSpeed * mouseDelta.y;
+		glm::clamp(phi, -79.0f, 79.0f);
 	}
 	else {
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
@@ -51,9 +52,10 @@ void Camera::UpdateCamera(float deltaTime, GLFWwindow* window)
 
 glm::mat4 Camera::GetViewMatrix()
 {
-	float thertaRad = glm::radians(theta);
+	float thetaRad = glm::radians(theta);
 	float phiRad = glm::radians(phi);
-	glm::vec3 forward(cos(phiRad) * cos(thertaRad), sin(phiRad), cos(phiRad * sin(thertaRad)));
+
+	glm::vec3 forward(cos(phiRad) * cos(thetaRad), sin(phiRad), cos(phiRad) * sin(thetaRad));
 
 	return glm::lookAt(position, position + forward, glm::vec3(0, 1, 0));
 }

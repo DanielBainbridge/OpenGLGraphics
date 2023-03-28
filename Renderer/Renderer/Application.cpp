@@ -41,11 +41,16 @@ bool Application::StartUp() {
 	glEnableVertexAttribArray(1);
 
 	glEnable(GL_DEPTH_TEST);
+	//change front face to be clockwise
+	glFrontFace(GL_CW);
+	//cull back faces
+	glEnable(GL_CULL_FACE);
+	//glEnable(GL_STENCIL);
 	
-	glad_glClearColor(0, 0, 0, 1);
+	glad_glClearColor(0.1, 0.1, 0.1, 1);
 
 	//setup camera
-	camera = new Camera(3.141592 / 6, 0.01, 15000);
+	camera = new Camera(3.141592 / 6, 2.0f, 16000);
 	camera->SetPosition(glm::vec3(-750, 0, -750));
 }
 
@@ -70,16 +75,14 @@ bool Application::Run() {
 
 void Application::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferID);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//set matrix transform of stuff
 
 	Draw();
 
 	//shader
 	//set transform matrix from camera
-	shader.SetMatrixUniform("transformMatrix", camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix());
-
 
 	glfwSwapBuffers(window);
 	glfwPollEvents();

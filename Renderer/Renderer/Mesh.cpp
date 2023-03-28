@@ -3,6 +3,9 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include <iostream>
+#include "ShaderProgram.h"
+#include <fstream>
+#include <sstream>
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -63,7 +66,8 @@ void Mesh::InitialiseQuad()
 }
 
 void Mesh::Draw()
-{	glBindVertexArray(vao);
+{
+	glBindVertexArray(vao);
 	if (ibo != 0)
 		glDrawElements(GL_TRIANGLES, 3 * triCount, GL_UNSIGNED_INT, 0);
 	else
@@ -120,8 +124,11 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 void Mesh::InitialiseFromFile(std::string filename)
 {
 	//read vertices from model
-	const aiScene* scene = aiImportFile(filename.c_str(), aiProcess_Triangulate);
-	
+	//aiPostProcessSteps steps = aiPro
+	const aiScene* scene = aiImportFile(filename.c_str(),
+		aiProcess_Triangulate &
+		aiProcess_CalcTangentSpace &
+		aiProcess_JoinIdenticalVertices);
 	//load meshes we find
 	std::vector<aiMesh*> meshes;
 	for (int i = 0; i < scene->mNumMeshes; i++) {
@@ -138,7 +145,7 @@ void Mesh::InitialiseFromFile(std::string filename)
 	for (aiMesh* m : meshes) {
 
 		//check if the mesh type is and skip it if it is a line
-		if (m->mPrimitiveTypes == aiPrimitiveType_LINE) continue;
+		if (m->mPrimitiveTypes & aiPrimitiveType_LINE) continue;
 
 		//get faces and vertices of the current mesh
 		numF = m->mNumFaces;
@@ -164,14 +171,59 @@ void Mesh::InitialiseFromFile(std::string filename)
 		totalVert += numV;
 
 		//extract vertex data
-		for (int j = 0; j < numV; j++)
+		for (int i = 0; i < numV; i++)
 		{
-			Vertex vert = Vertex{ glm::vec4(m->mVertices[j].x, m->mVertices[j].y, m->mVertices[j].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
+			//position
+			Vertex vert = Vertex{ glm::vec4(m->mVertices[i].x, m->mVertices[i].y, m->mVertices[i].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
+			//normals
+			vert.normal = glm::vec4(m->mNormals[i].x, m->mNormals[i].y, m->mNormals[i].z, 0);
+			//UV's
+
+			//add vertex
 			vertices.push_back(vert);
-			//normals and uv's				
 		}
 	}
 
 	Initialise(totalVert, vertices.data(), indices.size(), indices.data());
 
+}
+
+void Mesh::SetPosition(glm::vec3 position)
+{
+	glm::translate(quadTransform, position);
+	quadTransform = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		position.x, position.y, position.z, 1
+	};
+}
+
+void Mesh::ApplyMaterial(ShaderProgram* shader)
+{
+	shader->SetVectorUniform("Ka", Ka);
+	shader->SetVectorUniform("Kd", Kd);
+	shader->SetVectorUniform("Ks", Ks);
+	shader->SetFloatUniform("SpecularPower", specularPower);
+}
+
+void Mesh::LoadMaterial(std::string filename)
+{
+	std::fstream file(filename.c_str(), std::ios::in);
+	std::string line;
+	std::string header;
+	char buffer[256];
+	while (!file.eof()) {
+		file.getline(buffer, 256);
+		line = buffer;
+		std::stringstream ss(line, std::stringstream::in | std::stringstream::out);
+		if (line.find("Ka") == 0)
+			ss >> header >> Ka.x >> Ka.y >> Ka.z;
+		else if (line.find("Ks") == 0)
+			ss >> header >> Ks.x >> Ks.y >> Ks.z;
+		else if (line.find("Kd") == 0)
+			ss >> header >> Kd.x >> Kd.y >> Kd.z;
+		else if (line.find("Ns") == 0)
+			ss >> header >> specularPower;
+	}
 }

@@ -20,6 +20,14 @@ public:
 	float GetAspectRatio() { return (windowWidth / (float)windowHeight); };
 	static void SetMousePosition(GLFWwindow* window, double x, double y);
 	float GetDeltaTime() { return deltaTime; };
+	Camera* camera;
+	ShaderProgram shader;
+	struct Light {
+		glm::vec3 direction;
+		glm::vec3 colour;
+	};
+	Light light;
+	glm::vec3 ambientLight;
 
 protected:
 
@@ -28,12 +36,11 @@ protected:
 	std::string windowName = "Window";
 	int windowWidth = 1280, windowHeight = 720;
 	glm::vec2 mousePosition;
-	Camera* camera;
+
 
 private:
 	float deltaTime = 0;
 	float lastTime = 0;
 	glm::vec2 lastMousePosition;
-	ShaderProgram shader;
 	GLuint bufferID;
 };

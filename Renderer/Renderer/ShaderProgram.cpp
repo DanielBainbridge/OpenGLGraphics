@@ -95,3 +95,9 @@ void ShaderProgram::SetMatrixUniform(std::string variableName, glm::mat4 value)
 
 	glUniformMatrix4fv(varLoc, 1, GL_FALSE, &value[0][0]);
 }
+
+void ShaderProgram::SetVectorUniform(std::string variableName, glm::vec3 value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform3fv(varLoc,1, &value[0]);
+}
