@@ -49,12 +49,28 @@ void Mesh::InitialiseQuad()
 	vertices[4].normal = { 0,1,0,0 };
 	vertices[5].normal = { 0,1,0,0 };
 
+	//vertex texture coordinates
+	vertices[0].texCoord = { 0.0f, 1.0f };
+	vertices[1].texCoord = { 1.0f, 1.0f };
+	vertices[2].texCoord = { 0.0f, 0.0f };
+	vertices[3].texCoord = { 0.0f, 0.0f };
+	vertices[4].texCoord = { 1.0f, 1.0f };
+	vertices[5].texCoord = { 1.0f, 0.0f };
+
 	//fill vertex buffer
 	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
 	//enable first element as position
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+
+	//enable second element as normal
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);
+
+	//enable third element as texture coords
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
 
 	//unbind buffers
 	glBindVertexArray(0);
@@ -100,6 +116,10 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	//enable second element as normal
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);
+
+	//enable third element as texture coords
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
 
 	//bind indicies
 	if (indexCount != 0) {
@@ -178,7 +198,11 @@ void Mesh::InitialiseFromFile(std::string filename)
 			//normals
 			vert.normal = glm::vec4(m->mNormals[i].x, m->mNormals[i].y, m->mNormals[i].z, 0);
 			//UV's
-
+			if (m->mTextureCoords[0]) {
+				vert.texCoord = glm::vec2(m->mTextureCoords[0][i].x, m->mTextureCoords[0][1].y);
+			}
+			else
+				vert.texCoord = glm::vec2(0);
 			//add vertex
 			vertices.push_back(vert);
 		}

@@ -1,6 +1,7 @@
 #pragma once
 #include "Application.h"
 #include "Mesh.h"
+#include "Texture.h"
 class MeshLoading : public Application {
 public:
 	MeshLoading();

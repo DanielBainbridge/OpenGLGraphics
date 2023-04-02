@@ -38,6 +38,7 @@ MeshLoading::MeshLoading() {
 	//	0,0,1,0,
 	//	-750,0,0,1 };
 	//meshes.push_back(newNewNewNewMesh);
+	
 
 	Mesh* stanBun = new Mesh();
 	stanBun->InitialiseFromFile("stanford\\Bunny.obj");

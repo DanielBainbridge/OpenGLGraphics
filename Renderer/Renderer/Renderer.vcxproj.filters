@@ -96,5 +96,8 @@
     <ClInclude Include="Texture.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="stb_image.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
