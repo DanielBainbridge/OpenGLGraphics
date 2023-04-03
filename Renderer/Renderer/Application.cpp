@@ -30,7 +30,7 @@ bool Application::StartUp() {
 
 
 	//Load shader
-	shader.LoadFromFiles("SimpleShader.vert", "SimpleShader.frag");
+	shader.LoadFromFiles("normalShader.vert", "normalShader.frag");
 	shader.Enable();
 	
 	glGenBuffers(1, &bufferID);

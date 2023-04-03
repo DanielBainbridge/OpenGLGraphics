@@ -83,21 +83,35 @@ ShaderProgram::~ShaderProgram()
 {
 }
 
-void ShaderProgram::SetFloatUniform(std::string variableName, float value)
-{
+void ShaderProgram::bindUniform(std::string variableName, int value) {
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform1i(varLoc, value);
+}
+void ShaderProgram::bindUniform(std::string variableName, float value) {
 	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
 	glUniform1f(varLoc, value);
 }
-
-void ShaderProgram::SetMatrixUniform(std::string variableName, glm::mat4 value)
-{
-	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
-
-	glUniformMatrix4fv(varLoc, 1, GL_FALSE, &value[0][0]);
+void ShaderProgram::bindUniform(std::string variableName, const glm::vec2& value) {
+	int varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform2f(varLoc, value.x, value.y);
 }
-
-void ShaderProgram::SetVectorUniform(std::string variableName, glm::vec3 value)
-{
+void ShaderProgram::bindUniform(std::string variableName, const glm::vec3& value) {
 	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
-	glUniform3fv(varLoc,1, &value[0]);
+	glUniform3f(varLoc, value.x, value.y, value.z);
+}
+void ShaderProgram::bindUniform(std::string variableName, const glm::vec4& value) {
+	int varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform4f(varLoc, value.x, value.y, value.z, value.w);
+}
+void ShaderProgram::bindUniform(std::string variableName, const glm::mat2& value) {
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniformMatrix2fv(varLoc, 1, GL_FALSE, &value[0][0]);
+}
+void ShaderProgram::bindUniform(std::string variableName, const glm::mat3& value) {
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniformMatrix3fv(varLoc, 1, GL_FALSE, &value[0][0]);
+}
+void ShaderProgram::bindUniform(std::string variableName, const glm::mat4& value) {
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniformMatrix4fv(varLoc, 1, GL_FALSE, &value[0][0]);
 }

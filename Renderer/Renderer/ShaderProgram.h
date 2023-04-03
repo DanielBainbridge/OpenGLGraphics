@@ -21,7 +21,12 @@ public:
 	ShaderProgram(const ShaderProgram& other) = delete;
 	ShaderProgram& operator=(const ShaderProgram& other) = delete;
 
-	void SetFloatUniform(std::string variableName, float value);
-	void SetMatrixUniform(std::string variableName, glm::mat4 value);
-	void SetVectorUniform(std::string variableName, glm::vec3 value);
+	void bindUniform(std::string variableName, int value);
+	void bindUniform(std::string variableName, float value);
+	void bindUniform(std::string variableName, const glm::vec2& value);
+	void bindUniform(std::string variableName, const glm::vec3& value);
+	void bindUniform(std::string variableName, const glm::vec4& value);
+	void bindUniform(std::string variableName, const glm::mat2& value);
+	void bindUniform(std::string variableName, const glm::mat3& value);
+	void bindUniform(std::string variableName, const glm::mat4& value);
 };

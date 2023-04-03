@@ -3,9 +3,9 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 #include <iostream>
-#include "ShaderProgram.h"
 #include <fstream>
 #include <sstream>
+#include "ShaderProgram.h"
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -121,6 +121,10 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
 
+	//enable fourth element as tangent
+	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)40);
+
 	//bind indicies
 	if (indexCount != 0) {
 		glGenBuffers(1, &ibo);
@@ -146,9 +150,10 @@ void Mesh::InitialiseFromFile(std::string filename)
 	//read vertices from model
 	//aiPostProcessSteps steps = aiPro
 	const aiScene* scene = aiImportFile(filename.c_str(),
-		aiProcess_Triangulate &
-		aiProcess_CalcTangentSpace &
-		aiProcess_JoinIdenticalVertices);
+		aiProcess_Triangulate |
+		aiProcess_CalcTangentSpace |
+		aiProcess_FlipUVs
+		);
 	//load meshes we find
 	std::vector<aiMesh*> meshes;
 	for (int i = 0; i < scene->mNumMeshes; i++) {
@@ -199,11 +204,18 @@ void Mesh::InitialiseFromFile(std::string filename)
 			vert.normal = glm::vec4(m->mNormals[i].x, m->mNormals[i].y, m->mNormals[i].z, 0);
 			//UV's
 			if (m->mTextureCoords[0]) {
-				vert.texCoord = glm::vec2(m->mTextureCoords[0][i].x, m->mTextureCoords[0][1].y);
+				vert.texCoord = glm::vec2(m->mTextureCoords[0][i].x, m->mTextureCoords[0][i].y);
 			}
 			else
 				vert.texCoord = glm::vec2(0);
 			//add vertex
+			//tangents
+			if (m->HasTangentsAndBitangents()) {
+				vert.tangent = glm::vec4(m->mTangents[i].x, m->mTangents[i].y, m->mTangents[i].z, 1);
+			}
+			if (!m->HasTangentsAndBitangents()) {
+				CalculateTangents(vertices, numV, indices);
+			}
 			vertices.push_back(vert);
 		}
 	}
@@ -225,10 +237,17 @@ void Mesh::SetPosition(glm::vec3 position)
 
 void Mesh::ApplyMaterial(ShaderProgram* shader)
 {
-	shader->SetVectorUniform("Ka", Ka);
-	shader->SetVectorUniform("Kd", Kd);
-	shader->SetVectorUniform("Ks", Ks);
-	shader->SetFloatUniform("SpecularPower", specularPower);
+	shader->bindUniform("Ka", Ka);
+	shader->bindUniform("Kd", Kd);
+	shader->bindUniform("Ks", Ks);
+	shader->bindUniform("SpecularPower", specularPower);
+
+	mapKd.Bind(0);
+	shader->bindUniform("diffuseTex", 0);
+	mapKs.Bind(1);
+	shader->bindUniform("specularTex", 1);
+	mapNormal.Bind(2);
+	shader->bindUniform("normalTex", 2);
 }
 
 void Mesh::LoadMaterial(std::string filename)
@@ -237,6 +256,12 @@ void Mesh::LoadMaterial(std::string filename)
 	std::string line;
 	std::string header;
 	char buffer[256];
+
+	std::string directory(filename);
+	int index = directory.rfind('\\');
+	if (index != -1) {
+		directory = directory.substr(0, index + 1);
+	}
 	while (!file.eof()) {
 		file.getline(buffer, 256);
 		line = buffer;
@@ -249,5 +274,74 @@ void Mesh::LoadMaterial(std::string filename)
 			ss >> header >> Kd.x >> Kd.y >> Kd.z;
 		else if (line.find("Ns") == 0)
 			ss >> header >> specularPower;
+		else if (line.find("map_Kd") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			mapKd.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("map_Ks") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			mapKs.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("bump") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			mapNormal.LoadFromFile((directory + mapFileName).c_str());
+		}
 	}
+}
+
+void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCount, const std::vector<unsigned int>& indices)
+{
+	glm::vec4* tan1 = new glm::vec4[vertexCount * 2];
+	glm::vec4* tan2 = tan1 + vertexCount;
+	memset(tan1, 0, vertexCount * sizeof(glm::vec4) * 2);
+	
+	unsigned int indexCount = (unsigned int)indices.size();
+	for (unsigned int a = 0; a < indexCount; a += 3) {
+		long i1 = indices[a];
+		long i2 = indices[a + 1];
+		long i3 = indices[a + 2];
+
+		const glm::vec4& v1 = vertices[i1].position;
+		const glm::vec4& v2 = vertices[i2].position;
+		const glm::vec4& v3 = vertices[i3].position;
+
+		const glm::vec2& w1 = vertices[i1].texCoord;
+		const glm::vec2& w2 = vertices[i2].texCoord;
+		const glm::vec2& w3 = vertices[i3].texCoord;
+
+		float x1 = v2.x - v1.x;
+		float x2 = v3.x - v1.x;
+		float y1 = v2.y - v1.y;
+		float y2 = v3.y - v1.y;
+		float z1 = v2.z - v1.z;
+		float z2 = v3.z - v1.z;
+
+		float s1 = w2.x - w1.x;
+		float s2 = w3.x - w1.x;
+		float t1 = w2.y - w1.y;
+		float t2 = w3.y - w1.y;
+
+		float r = 1.0f / (s1 * t2 - s2 * t1);
+		glm::vec4 sDir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2), (t2 * z1 - t1 * z2), 0);
+		glm::vec4 tDir((s2 * x1 - s1 * x2) * r, (s2 * y1 - s1 * y2), (s2 * z1 - s1 * z2), 0);
+
+		tan1[i1] += sDir;
+		tan1[i2] += sDir;
+		tan1[i3] += sDir;
+
+		tan2[i1] += tDir;
+		tan2[i2] += tDir;
+		tan2[i3] += tDir;
+	}
+	for (unsigned int a = 0; a < vertexCount; a++) {
+		const glm::vec3& n = glm::vec3(vertices[a].normal);
+		const glm::vec3& t = glm::vec3(tan1[a]);
+
+		vertices[a].tangent = glm::vec4(glm::normalize(t - n * glm::dot(n, t)), 0);
+		vertices[a].tangent.w = (glm::dot(glm::cross(glm::vec3(n), glm::vec3(t)), glm::vec3(tan2[a])) < 0.0f) ? 1.0f : -1.0f;
+	}
+	delete[] tan1;
 }

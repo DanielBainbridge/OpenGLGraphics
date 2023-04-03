@@ -4,7 +4,8 @@
 
 //in vec3 _Colour;
 in vec3 _Normal;
-in vec3 _Position;
+in vec4 _Position;
+in _TexCoords;
 
 uniform vec3 CameraPosition;
 
@@ -16,6 +17,8 @@ uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
 uniform float SpecularPower;
+
+uniform sampler2D diffuseTex;
 
 
 
@@ -37,9 +40,11 @@ void main()
 	//calc specular term
 	float specularTerm = pow(max(0, dot(R,V)), SpecularPower);
 	
+	vec3 textureColour = texture(diffuseTex, _TexCoords).rgb;
+	
 	//calc diffuse
-	vec3 diffuse = LightColour * Kd * lambertTerm;
-	vec3 ambient = AmbientColour * Ka;
+	vec3 diffuse = LightColour * Kd * lambertTerm * textureColour;
+	vec3 ambient = AmbientColour * Ka * textureColour;
 	vec3 specular = LightColour * Ks * specularTerm;
 	
 	FragColour = vec4(diffuse + ambient + specular, 1);

@@ -2,7 +2,7 @@
 
 layout (location = 0) in vec4 Position;
 layout (location = 1) in vec4 Normal;
-layout (location = 2) in vec3 TexCoords;
+layout (location = 2) in vec2 TexCoords;
 
 uniform mat4 ProjectionMatrix;
 uniform mat4 ModelMatrix;

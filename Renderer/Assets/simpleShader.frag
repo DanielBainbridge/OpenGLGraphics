@@ -5,7 +5,7 @@
 //in vec3 _Colour;
 in vec3 _Normal;
 in vec4 _Position;
-in _TexCoords;
+in vec2 _TexCoords;
 
 uniform vec3 CameraPosition;
 

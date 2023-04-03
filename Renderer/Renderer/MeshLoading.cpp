@@ -3,44 +3,47 @@
 
 MeshLoading::MeshLoading() {
 	//setup meshes
-	//Mesh* newMesh = new Mesh();
-	//newMesh->InitialiseFromFile("characters\\Pyro\\pyro.fbx");
-	////newMesh->LoadMaterial("characters\\Pyro\\Pyro_S.tga");
-	//newMesh->quadTransform = { 1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	750,0,0,1 };
-	//meshes.push_back(newMesh);
+	/*Mesh* newMesh = new Mesh();
+	newMesh->InitialiseFromFile("characters\\Pyro\\pyro.fbx");
+	newMesh->LoadMaterial("characters\\Pyro\\Pyro_S.tga");
+	newMesh->quadTransform = { 1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		750,0,0,1 };
+	meshes.push_back(newMesh);
 
-	//Mesh* newNewMesh = new Mesh();
-	//newNewMesh->InitialiseFromFile("characters\\Marksman\\Marksman.fbx");
-	////newNewMesh->LoadMaterial("characters\\Marksman\\Marksman_S.tga");
-	//newNewMesh->quadTransform = { 1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	750,0,1500,1 };
-	//meshes.push_back(newNewMesh);
+	Mesh* newNewMesh = new Mesh();
+	newNewMesh->InitialiseFromFile("characters\\Marksman\\Marksman.fbx");
+	newNewMesh->LoadMaterial("characters\\Marksman\\Marksman_S.tga");
 
-	//Mesh* newNewNewMesh = new Mesh();
-	//newNewNewMesh->InitialiseFromFile("characters\\Enemytank\\EnemyTank.fbx");
-	////newNewNewMesh->LoadMaterial("characters\\Enemytank\\EnemyTank_S.tga");
-	//newNewNewMesh->quadTransform = { 1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	-750,0,1500,1 };
-	//meshes.push_back(newNewNewMesh);
+	newNewMesh->quadTransform = { 1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		750,0,1500,1 };
+	meshes.push_back(newNewMesh);
 
-	//Mesh* newNewNewNewMesh = new Mesh();
-	//newNewNewNewMesh->InitialiseFromFile("characters\\Demolition\\demolition.fbx");
-	////newNewNewNewMesh->LoadMaterial("characters\\Demolition\\demolition_s.tga");
-	//newNewNewNewMesh->quadTransform = { 1,0,0,0,
-	//	0,1,0,0,
-	//	0,0,1,0,
-	//	-750,0,0,1 };
-	//meshes.push_back(newNewNewNewMesh);
+	Mesh* newNewNewMesh = new Mesh();
+	newNewNewMesh->InitialiseFromFile("characters\\Enemytank\\EnemyTank.fbx");
+	newNewNewMesh->LoadMaterial("characters\\Enemytank\\EnemyTank_S.tga");
+
+	newNewNewMesh->quadTransform = { 1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		-750,0,1500,1 };
+	meshes.push_back(newNewNewMesh);
+
+	Mesh* newNewNewNewMesh = new Mesh();
+	newNewNewNewMesh->InitialiseFromFile("characters\\Demolition\\demolition.fbx");
+	newNewNewNewMesh->LoadMaterial("characters\\Demolition\\demolition_s.tga");
+
+	newNewNewNewMesh->quadTransform = { 1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		-750,0,0,1 };
+	meshes.push_back(newNewNewNewMesh);*/
 	
 
-	Mesh* stanBun = new Mesh();
+	/*Mesh* stanBun = new Mesh();
 	stanBun->InitialiseFromFile("stanford\\Bunny.obj");
 	stanBun->LoadMaterial("stanford\\Bunny.mtl");
 	stanBun->SetPosition(glm::vec3(-10, 0, 10));
@@ -62,7 +65,12 @@ MeshLoading::MeshLoading() {
 	stanDrag->InitialiseFromFile("stanford\\Dragon.obj");
 	stanDrag->LoadMaterial("stanford\\Dragon.mtl");
 	stanDrag->SetPosition(glm::vec3(10, 0, 10));
-	meshes.push_back(stanDrag);
+	meshes.push_back(stanDrag);*/
+
+	Mesh* soulSpear = new Mesh();
+	soulSpear->InitialiseFromFile("soulspear\\soulspear.obj");
+	soulSpear->LoadMaterial("soulspear\\soulspear.mtl");
+	meshes.push_back(soulSpear);
 
 
 
@@ -73,8 +81,8 @@ MeshLoading::MeshLoading() {
 
 	//light setup
 	light.colour = { 1 ,1 ,1 };
-	ambientLight = { 0.45f ,0.45f ,0.45f };
-
+	ambientLight = { 1 ,1 ,1 };
+	light.direction = {-1,-1,-1};
 }
 
 void MeshLoading::Update() {
@@ -84,12 +92,12 @@ void MeshLoading::Update() {
 void MeshLoading::Draw() {
 	for (Mesh* m : meshes) {
 
-		shader.SetVectorUniform("AmbientColour", ambientLight);
-		shader.SetVectorUniform("LightColour", light.colour);
-		shader.SetVectorUniform("LightDirection", light.direction);
-		shader.SetMatrixUniform("ProjectionMatrix", camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix() * m->quadTransform);
-		shader.SetMatrixUniform("ModelMatrix", m->quadTransform);
-		shader.SetVectorUniform("CameraPosition", camera->GetPosition());
+		shader.bindUniform("AmbientColour", ambientLight);
+		shader.bindUniform("LightColour", light.colour);
+		shader.bindUniform("LightDirection", light.direction);
+		shader.bindUniform("ProjectionMatrix", camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix() * m->quadTransform);
+		shader.bindUniform("ModelMatrix", m->quadTransform);
+		shader.bindUniform("CameraPosition", camera->GetPosition());
 		m->ApplyMaterial(&shader);
 		m->Draw();
 	}

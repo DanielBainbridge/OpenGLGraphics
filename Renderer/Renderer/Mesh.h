@@ -1,5 +1,6 @@
 #pragma once
 #include "Graphics.h"
+#include "Texture.h"
 class ShaderProgram;
 class Mesh {
 public:
@@ -10,6 +11,7 @@ public:
 		glm::vec4 position;
 		glm::vec4 normal;
 		glm::vec2 texCoord;
+		glm::vec4 tangent;
 	};
 
 	void InitialiseQuad();
@@ -20,12 +22,12 @@ public:
 	void SetPosition(glm::vec3 position);
 	void ApplyMaterial(ShaderProgram* shader);
 	void LoadMaterial(std::string filename);
+	void CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCount, const std::vector<unsigned int>& indices);
 	glm::mat4 quadTransform =
 	{ 1,0,0,0,
 	0,1,0,0,
 	0,0,1,0,
 	0,0,0,1 };
-
 
 
 protected:
@@ -36,4 +38,8 @@ protected:
 	glm::vec3 Kd; // diffuse colour of surface
 	glm::vec3 Ks; //specular colour of surface
 	float specularPower;
+
+	Texture mapKd; // texture map diffuse
+	Texture mapKs; // texture map specular
+	Texture mapNormal; // texture map normal
 };
