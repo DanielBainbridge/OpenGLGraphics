@@ -15,6 +15,11 @@ uniform vec3 AmbientColour; // ambient light colour
 uniform vec3 LightColour; // light colour
 uniform vec3 LightDirection; // light direction
 
+const int MAX_LIGHTS = 4;
+uniform int numLights;
+uniform vec3 PointLightColour[MAX_LIGHTS];
+uniform vec3 PointLightPosition[MAX_LIGHTS];
+
 uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
@@ -24,10 +29,19 @@ uniform sampler2D diffuseTex;
 uniform sampler2D specularTex;
 uniform sampler2D normalTex;
 
-
-
-
 out vec4 FragColour;
+
+vec3 GetDiffuse(vec3 direction, vec3 colour, vec3 normal){
+	return colour * max(0, dot(normal, -direction));
+}
+vec3 GetSpecular(vec3 direction, vec3 colour, vec3 normal, vec3 view){
+	vec3 R = reflect(direction,normal);
+	float specularTerm = pow(max(0,dot(R, view)), specularPower);
+	if(dot(direction, normal) > 0){
+		specularTerm = 0.0;
+	}
+	return specularTerm * colour;
+}
 
 void main()
 {
@@ -40,30 +54,31 @@ void main()
 	vec3 textureNormal = texture(normalTex, _TexCoords).rgb;
 	N = TBN * (textureNormal * 2 - 1);
 	
-	//calc lambert term
-	float lambertTerm = max(0, min(1, dot(N, -L)));
+	//calc total diffuse
+	vec3 diffuseTotal = GetDiffuse(L, LightColour, N);
 	
-	//calc view + reflection vector
-	vec3 V = normalize(CameraPosition - _Position.xyz);
-	vec3 R = reflect(L,N);
-	float debugVal = 1.0;
+	//calc total specular
+	vec3 specularTotal = GetSpecular(L, LightColour, N, V)
+	
+	for(int i = 0; i < numLights; i++){
+		vec3 direction = _Position - PointLightPosition[i];
+		float distance = length(direction);
+		direction = direction / distance;
+		
+		// attenuate the light intensity with inverse square law
+		vec3 colour = PointLightColour[i]/(distance * distance);
+		diffuseTotal += GetDiffuse(direction, colour, N);
+		specularTotal += GetSpecular(direction, colour, N, V);
+	}
 
-	//calc specular term
-	float specularTerm = pow(max(0, dot(R,V)), SpecularPower);
-	
+
 	vec3 textureDiffuse = texture(diffuseTex, _TexCoords).rgb;
 	vec3 textureSpecular = texture(specularTex, _TexCoords).rgb;
-	
-	
-	if(dot(L,N) > 0){
-		specularTerm = 0.0;
-	}
-	
-	
-	//calc diffuse
-	vec3 diffuse = LightColour * Kd * lambertTerm * textureDiffuse;
+		
+	//calculate lighting	
+	vec3 diffuse = Kd * diffuseTotal * textureDiffuse;
 	vec3 ambient = AmbientColour * Ka * textureDiffuse;
-	vec3 specular = LightColour * Ks * specularTerm;
+	vec3 specular = LightColour * Ks * specularTotal;
 	
 	FragColour = vec4(diffuse + ambient + specular, 1)  * (N,1);
 }

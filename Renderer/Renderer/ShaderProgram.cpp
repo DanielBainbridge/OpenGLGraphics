@@ -79,6 +79,7 @@ void ShaderProgram::Enable()
 	glUseProgram(shaderProgramID);
 }
 
+
 ShaderProgram::~ShaderProgram()
 {
 }
@@ -114,4 +115,52 @@ void ShaderProgram::bindUniform(std::string variableName, const glm::mat3& value
 void ShaderProgram::bindUniform(std::string variableName, const glm::mat4& value) {
 	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
 	glUniformMatrix4fv(varLoc, 1, GL_FALSE, &value[0][0]);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, int* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform1iv(varLoc, count, value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, float* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform1fv(varLoc, count, value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, const glm::vec2* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform2fv(varLoc, count, (float*)value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, const glm::vec3* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform3fv(varLoc, count, (float*)value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, const glm::vec4* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniform4fv(varLoc, count, (float*)value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, const glm::mat2* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniformMatrix2fv(varLoc, count, GL_FALSE, (float*)value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, const glm::mat3* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniformMatrix3fv(varLoc, count, GL_FALSE, (float*)value);
+}
+
+void ShaderProgram::bindUniform(std::string variableName, int count, const glm::mat4* value)
+{
+	GLint varLoc = glGetUniformLocation(shaderProgramID, variableName.c_str());
+	glUniformMatrix4fv(varLoc, count, GL_FALSE, (float*)value);
 }

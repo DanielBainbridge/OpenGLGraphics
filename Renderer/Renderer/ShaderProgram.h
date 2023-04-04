@@ -21,6 +21,7 @@ public:
 	ShaderProgram(const ShaderProgram& other) = delete;
 	ShaderProgram& operator=(const ShaderProgram& other) = delete;
 
+	//bind uniforms
 	void bindUniform(std::string variableName, int value);
 	void bindUniform(std::string variableName, float value);
 	void bindUniform(std::string variableName, const glm::vec2& value);
@@ -29,4 +30,14 @@ public:
 	void bindUniform(std::string variableName, const glm::mat2& value);
 	void bindUniform(std::string variableName, const glm::mat3& value);
 	void bindUniform(std::string variableName, const glm::mat4& value);
+
+	//bind array uniforms
+	void bindUniform(std::string variableName, int count, int* value);
+	void bindUniform(std::string variableName, int count, float* value);
+	void bindUniform(std::string variableName, int count, const glm::vec2* value);
+	void bindUniform(std::string variableName, int count, const glm::vec3* value);
+	void bindUniform(std::string variableName, int count, const glm::vec4* value);
+	void bindUniform(std::string variableName, int count, const glm::mat2* value);
+	void bindUniform(std::string variableName, int count, const glm::mat3* value);
+	void bindUniform(std::string variableName, int count, const glm::mat4* value);
 };

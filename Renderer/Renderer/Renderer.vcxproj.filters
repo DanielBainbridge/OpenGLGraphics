@@ -14,14 +14,14 @@
     <Filter Include="ProgramEntry">
       <UniqueIdentifier>{7ad3bd0b-0161-4ae9-99b4-b4bc0f13a877}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Camera">
-      <UniqueIdentifier>{b80632a4-5199-48af-ab01-096433ddbf2d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Applications">
       <UniqueIdentifier>{bd2c898b-67c3-4aa1-8c15-90f1c4b8e563}</UniqueIdentifier>
     </Filter>
     <Filter Include="Model">
       <UniqueIdentifier>{3e407648-f1e6-47ee-a4cc-4b0eba738405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
+      <UniqueIdentifier>{b80632a4-5199-48af-ab01-096433ddbf2d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -41,7 +41,7 @@
       <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Camera</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>ProgramEntry</Filter>
@@ -58,6 +58,13 @@
     <ClCompile Include="Texture.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -79,7 +86,7 @@
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Camera</Filter>
+      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>ProgramEntry</Filter>
@@ -98,6 +105,15 @@
     </ClInclude>
     <ClInclude Include="stb_image.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

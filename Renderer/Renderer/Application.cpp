@@ -50,7 +50,7 @@ bool Application::StartUp() {
 	glad_glClearColor(0.1, 0.1, 0.1, 1);
 
 	//setup camera
-	camera = new Camera(3.141592 / 6, 2.0f, 16000);
+	camera = new Camera(3.141592 / 6, 1.5f, 16000);
 	camera->SetPosition(glm::vec3(-750, 0, -750));
 }
 

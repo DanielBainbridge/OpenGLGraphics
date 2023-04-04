@@ -1,7 +1,15 @@
 #include "MeshLoading.h"
 #include "Camera.h"
+#include "Scene.h"
+#include "Light.h"
 
 MeshLoading::MeshLoading() {
+
+	//scene setup
+	Light* light = new Light({ 1,1,1 }, { 0.8f ,1 ,0.8f });
+	glm::vec3 ambientLight = { 0.75f,0.75f,0.75f };
+	scene = new Scene(camera, glm::vec2(GetWindowWidth(), GetWindowHeight()), light, ambientLight);
+
 	//setup meshes
 	/*Mesh* newMesh = new Mesh();
 	newMesh->InitialiseFromFile("characters\\Pyro\\pyro.fbx");
@@ -41,7 +49,7 @@ MeshLoading::MeshLoading() {
 		0,0,1,0,
 		-750,0,0,1 };
 	meshes.push_back(newNewNewNewMesh);*/
-	
+
 
 	/*Mesh* stanBun = new Mesh();
 	stanBun->InitialiseFromFile("stanford\\Bunny.obj");
@@ -70,36 +78,32 @@ MeshLoading::MeshLoading() {
 	Mesh* soulSpear = new Mesh();
 	soulSpear->InitialiseFromFile("soulspear\\soulspear.obj");
 	soulSpear->LoadMaterial("soulspear\\soulspear.mtl");
-	meshes.push_back(soulSpear);
 
-
+	for (int i = 0; i < 10; i++) {
+		GameObject* soulSpearInstance = new GameObject(soulSpear->quadTransform, soulSpear, &this->shader);
+		soulSpearInstance->SetTransform({ i * i, 0, 0 }, { 0, i * 20, 0 }, { i * 1.01f,i * 1.01f, i * 1.01f });
+		scene->AddGameObject(soulSpearInstance);
+	}
 
 	//camera setup
 	camera->SetPosition(glm::vec3(0, 5, 10));
 	camera->SetRotation(-90, -10);
-	camera->SetMoveSpeed(5);
+	camera->SetMoveSpeed(50);
 
 	//light setup
-	light.colour = { 1 ,1 ,1 };
-	ambientLight = { 1 ,1 ,1 };
-	light.direction = {-1,-1,-1};
+	scene->GetLight()->SetColour({ 1 ,1 ,1 });
+	scene->SetAmbientLight({ 1, 1, 1 });
+}
+
+MeshLoading::~MeshLoading()
+{
+	delete scene;
 }
 
 void MeshLoading::Update() {
 	float time = glfwGetTime();
-	light.direction = glm::normalize(glm::vec3(sin(time), 0, cos(time)));
+	scene->GetLight()->SetDirection(glm::normalize(glm::vec3((float)sin(time), 0, (float)cos(time))));
 }
 void MeshLoading::Draw() {
-	for (Mesh* m : meshes) {
-
-		shader.bindUniform("AmbientColour", ambientLight);
-		shader.bindUniform("LightColour", light.colour);
-		shader.bindUniform("LightDirection", light.direction);
-		shader.bindUniform("ProjectionMatrix", camera->GetProjectionMatrix(windowWidth, windowHeight) * camera->GetViewMatrix() * m->quadTransform);
-		shader.bindUniform("ModelMatrix", m->quadTransform);
-		shader.bindUniform("CameraPosition", camera->GetPosition());
-		m->ApplyMaterial(&shader);
-		m->Draw();
-	}
-
+	scene->Draw();
 }

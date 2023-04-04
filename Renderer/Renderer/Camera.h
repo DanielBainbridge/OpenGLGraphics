@@ -17,7 +17,7 @@ public:
 	inline void SetRotation(float thetaVal, float phiVal) { theta = thetaVal; phi = phiVal; };
 
 private:
-	float turnSpeed = 0.1;
+	float turnSpeed = 0.1f;
 	float moveSpeed = 500;
 	float fieldOfView;
 	float nearClipPlane;

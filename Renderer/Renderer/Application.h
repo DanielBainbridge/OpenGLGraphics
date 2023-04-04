@@ -20,14 +20,10 @@ public:
 	float GetAspectRatio() { return (windowWidth / (float)windowHeight); };
 	static void SetMousePosition(GLFWwindow* window, double x, double y);
 	float GetDeltaTime() { return deltaTime; };
+	int GetWindowWidth() { return windowWidth; };
+	int GetWindowHeight() { return windowHeight; };
 	Camera* camera;
 	ShaderProgram shader;
-	struct Light {
-		glm::vec3 direction;
-		glm::vec3 colour;
-	};
-	Light light;
-	glm::vec3 ambientLight;
 
 protected:
 
