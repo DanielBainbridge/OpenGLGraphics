@@ -22,7 +22,8 @@ public:
 	glm::vec3* GetPointLightPositions() { return &pointLightPositions[0]; };
 	glm::vec3* GetPointLightColours() { return &pointLightColours[0]; };
 	std::vector<Light*> GetPointLights() { return pointLights; };
-
+	
+	void AddPointLight(Light* light);
 	void SetAmbientLight(glm::vec3 light) { ambientLight = light; };
 	
 

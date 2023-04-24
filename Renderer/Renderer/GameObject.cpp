@@ -10,6 +10,8 @@ GameObject::GameObject(glm::mat4 transform, Mesh* mesh, ShaderProgram* shaderPro
 	this->transform = transform;
 	this->mesh = mesh;
 	shader = shaderProgram;
+	scale = { mesh->quadTransform[0].x, mesh->quadTransform[1].y, mesh->quadTransform[2].z };
+	position = { mesh->quadTransform[0].w, mesh->quadTransform[1].w, mesh->quadTransform[2].w };
 }
 
 void GameObject::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale)
@@ -27,6 +29,7 @@ void GameObject::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::ve
 
 void GameObject::SetPosition(glm::vec3 position)
 {
+	this->position = position;
 	transform = glm::translate(glm::mat4(1), position)
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
@@ -36,6 +39,7 @@ void GameObject::SetPosition(glm::vec3 position)
 
 void GameObject::SetRotationEuler(glm::vec3 eulerAngles)
 {
+	rotation = eulerAngles;
 	transform = glm::translate(glm::mat4(1), position)
 		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
 		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
@@ -45,6 +49,7 @@ void GameObject::SetRotationEuler(glm::vec3 eulerAngles)
 
 void GameObject::SetScale(glm::vec3 scale)
 {
+	this->scale = scale;
 	transform = glm::translate(glm::mat4(1), position)
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
@@ -72,6 +77,7 @@ void GameObject::Draw(Scene* scene)
 	int numLights = scene->GetNumLights();
 	shader->bindUniform("numLights", numLights);
 	shader->bindUniform("PointLightPosition", numLights, scene->GetPointLightPositions());
+	shader->bindUniform("PointLightColour", numLights, scene->GetPointLightColours());
 
 	mesh->ApplyMaterial(this->shader);
 	mesh->Draw();

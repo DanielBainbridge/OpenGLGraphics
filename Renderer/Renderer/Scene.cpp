@@ -35,3 +35,8 @@ void Scene::AddGameObject(GameObject* instance)
 {
 	gameObjects.push_back(instance);
 }
+
+void Scene::AddPointLight(Light* light)
+{
+	pointLights.push_back(light);
+}

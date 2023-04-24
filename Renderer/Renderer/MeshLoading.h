@@ -12,4 +12,5 @@ public:
 	virtual void Draw() override;
 private:
 	Scene* scene;
+	bool depthTestEnable = true;
 };

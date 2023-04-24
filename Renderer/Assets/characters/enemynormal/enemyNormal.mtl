@@ -1,0 +1,10 @@
+newmtl _EnemyNormal_MAT
+illum 2
+
+Ka 0.000000 0.000000 0.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.005000 0.005000 0.005000
+Ns 20.000000
+map_Kd EnemyNormal1_D.tga
+map_Ks EnemyNormal_S.tga
+bump EnemyNormal_N.tga

@@ -1,9 +1,10 @@
 #include "Light.h"
 
-Light::Light(glm::vec3 direction, glm::vec3 colour)
+Light::Light(glm::vec3 direction, glm::vec3 colour, float intensity)
 {
 	this->direction = direction;
-	this->colour = colour;
+	rawColour = colour;
+	this->colour = colour * intensity;
 }
 
 void Light::SetDirection(glm::vec3 direction)
@@ -11,7 +12,8 @@ void Light::SetDirection(glm::vec3 direction)
 	this->direction = direction;
 }
 
-void Light::SetColour(glm::vec3 colour)
+void Light::SetColour(glm::vec3 colour, float intensity)
 {
-	this->colour = colour;
+	rawColour = colour;
+	this->colour = colour * intensity;
 }

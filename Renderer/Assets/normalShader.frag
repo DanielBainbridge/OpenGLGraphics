@@ -36,7 +36,7 @@ vec3 GetDiffuse(vec3 direction, vec3 colour, vec3 normal){
 }
 vec3 GetSpecular(vec3 direction, vec3 colour, vec3 normal, vec3 view){
 	vec3 R = reflect(direction,normal);
-	float specularTerm = pow(max(0,dot(R, view)), specularPower);
+	float specularTerm = pow(max(0,dot(R, view)), SpecularPower);
 	if(dot(direction, normal) > 0){
 		specularTerm = 0.0;
 	}
@@ -54,14 +54,16 @@ void main()
 	vec3 textureNormal = texture(normalTex, _TexCoords).rgb;
 	N = TBN * (textureNormal * 2 - 1);
 	
+	vec3 V = normalize(CameraPosition - _Position.xyz);
+	
 	//calc total diffuse
 	vec3 diffuseTotal = GetDiffuse(L, LightColour, N);
 	
 	//calc total specular
-	vec3 specularTotal = GetSpecular(L, LightColour, N, V)
+	vec3 specularTotal = GetSpecular(L, LightColour, N, V);
 	
 	for(int i = 0; i < numLights; i++){
-		vec3 direction = _Position - PointLightPosition[i];
+		vec3 direction = _Position.xyz - PointLightPosition[i];
 		float distance = length(direction);
 		direction = direction / distance;
 		
