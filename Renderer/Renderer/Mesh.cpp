@@ -1,7 +1,4 @@
 #include "Mesh.h"
-#include <assimp/scene.h>
-#include <assimp/cimport.h>
-#include <assimp/postprocess.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -156,6 +153,7 @@ void Mesh::InitialiseFromFile(std::string filename)
 		);
 	//load meshes we find
 	std::vector<aiMesh*> meshes;
+
 	for (int i = 0; i < scene->mNumMeshes; i++) {
 		meshes.push_back(scene->mMeshes[i]);
 	}
@@ -237,6 +235,15 @@ void Mesh::SetPosition(glm::vec3 position)
 
 void Mesh::ApplyMaterial(ShaderProgram* shader)
 {
+	if (isPBR) {
+		ApplyPBRMaskMaterial(shader);
+		return;
+	}
+	ApplySpecularMaterial(shader);
+}
+
+void Mesh::ApplySpecularMaterial(ShaderProgram* shader)
+{
 	shader->bindUniform("Ka", Ka);
 	shader->bindUniform("Kd", Kd);
 	shader->bindUniform("Ks", Ks);
@@ -250,7 +257,34 @@ void Mesh::ApplyMaterial(ShaderProgram* shader)
 	shader->bindUniform("normalTex", 2);
 }
 
-void Mesh::LoadMaterial(std::string filename)
+void Mesh::ApplyPBRMaterial(ShaderProgram* shader)
+{
+	albedoMap.Bind(0);
+	shader->bindUniform("albedoMap", 0);
+	normalMap.Bind(1);
+	shader->bindUniform("normalMap", 1);
+	metallicMap.Bind(2);
+	shader->bindUniform("metallicMap", 2);
+	roughnessMap.Bind(3);
+	shader->bindUniform("roughnessMap", 3);
+	aoMap.Bind(4);
+	shader->bindUniform("aoMap", 4);
+}
+
+void Mesh::ApplyPBRMaskMaterial(ShaderProgram* shader)
+{
+	albedoMap.Bind(0);
+	shader->bindUniform("albedoMap", 0);
+	normalMap.Bind(1);
+	shader->bindUniform("normalMap", 1);
+	maskMap.Bind(2);
+	shader->bindUniform("maskMap", 2);
+}
+
+
+
+
+void Mesh::LoadSpecularMaterial(std::string filename)
 {
 	std::fstream file(filename.c_str(), std::ios::in);
 	std::string line;
@@ -291,6 +325,103 @@ void Mesh::LoadMaterial(std::string filename)
 		}
 	}
 }
+
+void Mesh::LoadPBRMaterial(std::string filename)
+{
+	std::fstream file(filename.c_str(), std::ios::in);
+	std::string line;
+	std::string header;
+	char buffer[256];
+
+	std::string directory(filename);
+	int index = directory.rfind('\\');
+	if (index != -1) {
+		directory = directory.substr(0, index + 1);
+	}
+	while (!file.eof()) {
+		file.getline(buffer, 256);
+		line = buffer;
+		std::stringstream ss(line, std::stringstream::in | std::stringstream::out);
+		if (line.find("albedo") == 0)
+			ss >> header >> albedo.x >> albedo.y >> albedo.z;
+		else if (line.find("metallic") == 0)
+			ss >> header >> metallic;
+		else if (line.find("roughness") == 0)
+			ss >> header >> roughness;
+		else if (line.find("ao") == 0)
+			ss >> header >> ao;
+		else if (line.find("albedoMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			albedoMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("normalMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			normalMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("metallicMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			metallicMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("roughnessMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			roughnessMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("aoMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			aoMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+	}
+}
+void Mesh::LoadPBRMaskMaterial(std::string filename)
+{
+	std::fstream file(filename.c_str(), std::ios::in);
+	std::string line;
+	std::string header;
+	char buffer[256];
+
+	std::string directory(filename);
+	int index = directory.rfind('\\');
+	if (index != -1) {
+		directory = directory.substr(0, index + 1);
+	}
+	while (!file.eof()) {
+		file.getline(buffer, 256);
+		line = buffer;
+		std::stringstream ss(line, std::stringstream::in | std::stringstream::out);
+		if (line.find("albedo ") == 0)
+			ss >> header >> albedo.x >> albedo.y >> albedo.z;
+		else if (line.find("metallic") == 0)
+			ss >> header >> metallic;
+		else if (line.find("roughness") == 0)
+			ss >> header >> roughness;
+		else if (line.find("ao") == 0)
+			ss >> header >> ao;
+		else if (line.find("albedoMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			albedoMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("normalMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			normalMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("maskMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			maskMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+	}
+}
+
+
+
+
 
 void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCount, const std::vector<unsigned int>& indices)
 {

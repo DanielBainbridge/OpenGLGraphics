@@ -1,0 +1,15 @@
+#
+#
+#
+
+newmtl _Spider_MAT
+illum 2
+	
+albedo 1 1 1
+metallic 0
+roughness 0.5
+ao 0.5
+
+albedoMap TEX_CHA_BaseMap_Wasp.tga
+normalMap TEX_CHA_Normal_Wasp.tga
+maskMap TEX_CHA_MaskMap_Wasp.tga

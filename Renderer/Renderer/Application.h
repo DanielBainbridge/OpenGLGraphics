@@ -23,7 +23,8 @@ public:
 	int GetWindowWidth() { return windowWidth; };
 	int GetWindowHeight() { return windowHeight; };
 	Camera* camera;
-	ShaderProgram shader;
+	ShaderProgram phongShader;
+	ShaderProgram PBRShader;
 
 protected:
 

@@ -1,0 +1,10 @@
+#
+#
+#
+
+newmtl _Spider_MAT
+illum 2
+
+albedoMap TEX_CHA_BaseMap_Mite.tga
+normalMap TEX_CHA_Normal_Mite.tga
+maskMap TEX_CHA_MaskMap_Mite.tga

@@ -30,8 +30,10 @@ bool Application::StartUp() {
 
 
 	//Load shader
-	shader.LoadFromFiles("normalShader.vert", "normalShader.frag");
-	shader.Enable();
+	phongShader.LoadFromFiles("normalShader.vert", "normalShader.frag");
+	phongShader.Enable();
+	PBRShader.LoadFromFiles("PBRShaderMask.vert", "PBRShaderMask.frag");
+	PBRShader.Enable();
 	
 	glGenBuffers(1, &bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, bufferID);

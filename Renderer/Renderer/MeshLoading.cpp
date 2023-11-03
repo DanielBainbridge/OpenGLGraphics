@@ -18,48 +18,103 @@ MeshLoading::MeshLoading() {
 	glm::vec3 ambientLight = { 0.75f,0.75f,0.75f };
 	scene = new Scene(camera, glm::vec2(GetWindowWidth(), GetWindowHeight()), light, ambientLight);
 
-	//setup meshes
+#pragma region SpecularMeshes
 
-	Mesh* pyro = new Mesh();
-	pyro->InitialiseFromFile("characters\\Pyro\\pyro.fbx");
-	pyro->LoadMaterial("characters\\Pyro\\pyro.mtl");
-	GameObject* pyroInstance = new GameObject(pyro->quadTransform, pyro, &this->shader);
-	pyroInstance->SetPosition({ 750, 0, 750 });
-	scene->AddGameObject(pyroInstance);
+	////setup meshes
 
-	Mesh* marksman = new Mesh();
-	marksman->InitialiseFromFile("characters\\Marksman\\Marksman.fbx");
-	marksman->LoadMaterial("characters\\Marksman\\marksman.mtl");
-	GameObject* marksmanInstance = new GameObject(marksman->quadTransform, marksman, &this->shader);
-	marksmanInstance->SetPosition({ -750,0,-750 });
-	scene->AddGameObject(marksmanInstance);
+	//Mesh* pyro = new Mesh();
+	//pyro->SetPBR(false);
+	//pyro->InitialiseFromFile("characters\\Pyro\\pyro.fbx");
+	//pyro->LoadSpecularMaterial("characters\\Pyro\\pyro.mtl");
+	//GameObject* pyroInstance = new GameObject(pyro->quadTransform, pyro, &this->phongShader);
+	//pyroInstance->SetPosition({ 750, 0, 750 });
+	//scene->AddGameObject(pyroInstance);
 
-	Mesh* tank = new Mesh();
-	tank->InitialiseFromFile("characters\\enemynormal\\EnemyNormal.fbx");
-	tank->LoadMaterial("characters\\enemynormal\\enemyNormal.mtl");
-	GameObject* tankInstance = new GameObject(tank->quadTransform, tank, &this->shader);
-	tankInstance->SetPosition({ -750,0,750 });
-	scene->AddGameObject(tankInstance);
+	//Mesh* marksman = new Mesh();
+	//marksman->SetPBR(false);
+	//marksman->InitialiseFromFile("characters\\Marksman\\Marksman.fbx");
+	//marksman->LoadSpecularMaterial("characters\\Marksman\\marksman.mtl");
+	//GameObject* marksmanInstance = new GameObject(marksman->quadTransform, marksman, &this->phongShader);
+	//marksmanInstance->SetPosition({ -750,0,-750 });
+	//scene->AddGameObject(marksmanInstance);
 
-	Mesh* demolition = new Mesh();
-	demolition->InitialiseFromFile("characters\\Demolition\\demolition.fbx");
-	demolition->LoadMaterial("characters\\Demolition\\demolition.mtl");
-	GameObject* demolitionInstance = new GameObject(demolition->quadTransform, demolition, &this->shader);
-	demolitionInstance->SetPosition({ 750,0,-750 });
-	scene->AddGameObject(demolitionInstance);
+	//Mesh* tank = new Mesh();
+	//tank->SetPBR(false);
+	//tank->InitialiseFromFile("characters\\enemynormal\\EnemyNormal.fbx");
+	//tank->LoadSpecularMaterial("characters\\enemynormal\\enemyNormal.mtl");
+	//GameObject* tankInstance = new GameObject(tank->quadTransform, tank, &this->phongShader);
+	//tankInstance->SetPosition({ -750,0,750 });
+	//scene->AddGameObject(tankInstance);
 
+	//Mesh* demolition = new Mesh();
+	//demolition->SetPBR(false);
+	//demolition->InitialiseFromFile("characters\\Demolition\\demolition.fbx");
+	//demolition->LoadSpecularMaterial("characters\\Demolition\\demolition.mtl");
+	//GameObject* demolitionInstance = new GameObject(demolition->quadTransform, demolition, &this->phongShader);
+	//demolitionInstance->SetPosition({ 750,0,-750 });
+	//scene->AddGameObject(demolitionInstance);
+
+#pragma endregion
+
+#pragma region PBRMeshes
+
+	/*Mesh* spider = new Mesh();
+	spider->SetPBR(true);
+	spider->InitialiseFromFile("PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
+	spider->LoadPBRMaskMaterial("PBR\\Spider\\Materials\\SpiderMaterial.mat");
+	GameObject* spiderInstance = new GameObject(spider->quadTransform, spider, &this->PBRShader);
+	spiderInstance->SetPosition({ 1000, 0, 1000 });
+	spiderInstance->SetScale(glm::vec3(1000, 1000, 1000));
+	spiderInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
+	scene->AddGameObject(spiderInstance);*/
+
+	Mesh* mite = new Mesh();
+	mite->SetPBR(true);
+	mite->InitialiseFromFile("PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	mite->LoadPBRMaskMaterial("PBR\\Mite\\Materials\\MiteMaterial.mat");
+	GameObject* miteInstance = new GameObject(mite->quadTransform, mite, &this->PBRShader);
+	miteInstance->SetPosition({ -1000, 0, -1000 });
+	miteInstance->SetScale(glm::vec3(10, 10, 10));
+	scene->AddGameObject(miteInstance);
+
+	Mesh* slug = new Mesh();
+	slug->SetPBR(true);
+	slug->InitialiseFromFile("PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
+	slug->LoadPBRMaskMaterial("PBR\\Slug\\Materials\\SlugMaterial.mat");
+	GameObject* slugInstance = new GameObject(slug->quadTransform, slug, &this->PBRShader);
+	slugInstance->SetPosition({ 1000, 0, -1000 });
+	slugInstance->SetScale(glm::vec3(10, 10, 10));
+	scene->AddGameObject(slugInstance);
+
+	Mesh* wasp = new Mesh();
+	wasp->SetPBR(true);
+	wasp->InitialiseFromFile("PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	wasp->LoadPBRMaskMaterial("PBR\\Wasp\\Materials\\WaspMaterial.mat");
+	GameObject* waspInstance = new GameObject(wasp->quadTransform, wasp, &this->PBRShader);
+	waspInstance->SetPosition({ -1000, 0, 1000 });
+	waspInstance->SetScale(glm::vec3(1000, 1000, 1000));
+	waspInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
+	scene->AddGameObject(waspInstance);
+
+
+
+#pragma endregion
+
+
+#pragma region SoulSpears
 
 	//soul spears with rotation and scale
 
-	Mesh* soulSpear = new Mesh();
+	/*Mesh* soulSpear = new Mesh();
 	soulSpear->InitialiseFromFile("soulspear\\soulspear.obj");
-	soulSpear->LoadMaterial("soulspear\\soulspear.mtl");
+	soulSpear->LoadSpecularMaterial("soulspear\\soulspear.mtl");
 
 	for (int i = 0; i < 10; i++) {
-		GameObject* soulSpearInstance = new GameObject(soulSpear->quadTransform, soulSpear, &this->shader);
+		GameObject* soulSpearInstance = new GameObject(soulSpear->quadTransform, soulSpear, &this->phongShader);
 		soulSpearInstance->SetTransform({ i * i * 10, 0, 0 }, { 0, i * 20, 0 }, { i * 10.0f,i * 10.0f, i * 10.0f });
 		scene->AddGameObject(soulSpearInstance);
-	}
+	}*/
+#pragma endregion
 
 	//camera setup
 	camera->SetPosition(glm::vec3(0, 500, 1000));
@@ -96,7 +151,7 @@ void MeshLoading::Update() {
 	}
 	auto tempColour = scene->GetPointLights()[0]->GetRawColour();
 	if (ImGui::DragFloat3("Light 1 Colour", &tempColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
-		scene->GetPointLights()[0]->SetColour(tempColour, 500000);
+		scene->GetPointLights()[0]->SetColour(tempColour, 50000000);
 	}
 	
 	auto tempPos2 = scene->GetPointLights()[1]->GetDirection();
@@ -105,8 +160,15 @@ void MeshLoading::Update() {
 	}
 	auto tempColour2 = scene->GetPointLights()[1]->GetRawColour();
 	if (ImGui::DragFloat3("Light 2 Colour", &tempColour2[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
-		scene->GetPointLights()[1]->SetColour(tempColour2, 500000);
+		scene->GetPointLights()[1]->SetColour(tempColour2, 50000000);
 	}
+
+	auto directionalLightSpeedMultiplier = directionalLightSpeed;
+	if (ImGui::DragFloat("Directional Light Speed", &directionalLightSpeedMultiplier, 0.01f, 0, 10, "%.2f", 1.0f)) {
+		directionalLightSpeed = directionalLightSpeedMultiplier;
+	}
+
+
 	//enable disable depth test
 	if (ImGui::Button("Depth Test On/Off")) {
 		if (depthTestEnable) {
@@ -124,7 +186,7 @@ void MeshLoading::Update() {
 
 	//update directional light direction
 	float time = glfwGetTime();
-	scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(time), 0, (float)cos(time))));
+	scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(time * directionalLightSpeed), 0, (float)cos(time * directionalLightSpeed))));
 
 }
 void MeshLoading::Draw() {

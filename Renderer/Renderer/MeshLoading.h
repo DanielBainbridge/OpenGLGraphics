@@ -13,4 +13,7 @@ public:
 private:
 	Scene* scene;
 	bool depthTestEnable = true;
+	float directionalLightSpeed = 1;
+
+
 };
