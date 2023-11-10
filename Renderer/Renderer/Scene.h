@@ -14,6 +14,8 @@ public:
 	~Scene();
 	void Draw();
 	void AddGameObject(GameObject* instance);
+	GameObject* GetGameObject(int location);
+	int GameObjectCount() { return gameObjects.size(); };
 	Camera* GetCamera() { return camera; };
 	glm::vec2 GetWindowSize() { return windowSize; };
 	Light* GetDirectionalLight() { return directionalLight; };

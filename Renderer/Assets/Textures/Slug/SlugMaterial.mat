@@ -1,0 +1,10 @@
+#
+#
+#
+
+newmtl _Slug_MAT
+illum 2
+	
+albedoMap TEX_CHA_BaseColour_Slug.tga
+normalMap TEX_CHA_Normal_Slug.tga
+maskMap TEX_CHA_MaskMap_Slug.tga

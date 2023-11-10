@@ -5,6 +5,7 @@
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
 class ShaderProgram;
+
 class Mesh {
 public:
 	Mesh() : triCount(0), vao(0), vbo(0), ibo(0) {}
@@ -42,7 +43,7 @@ public:
 protected:
 
 	bool isPBR = false;
-	std::vector<aiMesh*> meshes;
+	std::vector<std::string> materials;
 	unsigned int triCount;
 	//vertex array object, vertex buffer object, index buffer object
 	unsigned int vao, vbo, ibo;
@@ -78,4 +79,26 @@ protected:
 #pragma endregion
 
 
+};
+
+class Model {
+public:
+	enum ShaderType {
+		PBR,
+		PBRMask,
+		Specular
+	};
+	Model() {};
+	Model(Model& model);
+	~Model();
+	virtual void Draw();
+	ShaderType shaderType;
+
+
+private:
+	std::vector<Mesh*> meshes;
+	std::vector<std::string> materialFileNames;
+
+	void InitialiseMeshFromFile(std::string filename);
+	void LoadMaterials();
 };

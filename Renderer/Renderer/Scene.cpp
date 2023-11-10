@@ -36,6 +36,14 @@ void Scene::AddGameObject(GameObject* instance)
 	gameObjects.push_back(instance);
 }
 
+GameObject* Scene::GetGameObject(int location)
+{
+	if (location > gameObjects.size() || gameObjects.size() == 0) {
+		return nullptr;
+	}
+	return gameObjects[location];
+}
+
 void Scene::AddPointLight(Light* light)
 {
 	pointLights.push_back(light);

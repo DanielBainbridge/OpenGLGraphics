@@ -70,8 +70,8 @@ MeshLoading::MeshLoading() {
 
 	Mesh* mite = new Mesh();
 	mite->SetPBR(true);
-	mite->InitialiseFromFile("PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
-	mite->LoadPBRMaskMaterial("PBR\\Mite\\Materials\\MiteMaterial.mat");
+	mite->InitialiseFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	mite->LoadPBRMaskMaterial("Textures\\Mite\\MiteMaterial.mat");
 	GameObject* miteInstance = new GameObject(mite->quadTransform, mite, &this->PBRShader);
 	miteInstance->SetPosition({ -1000, 0, -1000 });
 	miteInstance->SetScale(glm::vec3(10, 10, 10));
@@ -79,8 +79,8 @@ MeshLoading::MeshLoading() {
 
 	Mesh* slug = new Mesh();
 	slug->SetPBR(true);
-	slug->InitialiseFromFile("PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
-	slug->LoadPBRMaskMaterial("PBR\\Slug\\Materials\\SlugMaterial.mat");
+	slug->InitialiseFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
+	slug->LoadPBRMaskMaterial("Textures\\Slug\\SlugMaterial.mat");
 	GameObject* slugInstance = new GameObject(slug->quadTransform, slug, &this->PBRShader);
 	slugInstance->SetPosition({ 1000, 0, -1000 });
 	slugInstance->SetScale(glm::vec3(10, 10, 10));
@@ -88,8 +88,8 @@ MeshLoading::MeshLoading() {
 
 	Mesh* wasp = new Mesh();
 	wasp->SetPBR(true);
-	wasp->InitialiseFromFile("PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
-	wasp->LoadPBRMaskMaterial("PBR\\Wasp\\Materials\\WaspMaterial.mat");
+	wasp->InitialiseFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	wasp->LoadPBRMaskMaterial("Textures\\Wasp\\WaspMaterial.mat");
 	GameObject* waspInstance = new GameObject(wasp->quadTransform, wasp, &this->PBRShader);
 	waspInstance->SetPosition({ -1000, 0, 1000 });
 	waspInstance->SetScale(glm::vec3(1000, 1000, 1000));
@@ -153,7 +153,7 @@ void MeshLoading::Update() {
 	if (ImGui::DragFloat3("Light 1 Colour", &tempColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
 		scene->GetPointLights()[0]->SetColour(tempColour, 50000000);
 	}
-	
+
 	auto tempPos2 = scene->GetPointLights()[1]->GetDirection();
 	if (ImGui::DragFloat3("Light 2 Position (XYZ)", &tempPos2[0])) {
 		scene->GetPointLights()[1]->SetDirection(tempPos2);
@@ -166,6 +166,15 @@ void MeshLoading::Update() {
 	auto directionalLightSpeedMultiplier = directionalLightSpeed;
 	if (ImGui::DragFloat("Directional Light Speed", &directionalLightSpeedMultiplier, 0.01f, 0, 10, "%.2f", 1.0f)) {
 		directionalLightSpeed = directionalLightSpeedMultiplier;
+	}
+	auto directionalLightIntense = directionalLightIntensity;
+	if (ImGui::DragFloat("Directional Light Intensity", &directionalLightIntense, 1.0f, 0, 1000, "%.2f", 1.0f)) {
+		directionalLightIntensity = directionalLightIntense;
+		scene->GetDirectionalLight()->SetColour(scene->GetDirectionalLight()->GetRawColour(), directionalLightIntensity);
+	}
+	auto directionalLightColour = scene->GetDirectionalLight()->GetRawColour();
+	if (ImGui::DragFloat3("Directional Light Colour", &directionalLightColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
+		scene->GetDirectionalLight()->SetColour(directionalLightColour, directionalLightIntensity);
 	}
 
 
@@ -187,7 +196,11 @@ void MeshLoading::Update() {
 	//update directional light direction
 	float time = glfwGetTime();
 	scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(time * directionalLightSpeed), 0, (float)cos(time * directionalLightSpeed))));
-
+	for (int i = 0; i < scene->GameObjectCount(); i++)
+	{
+		scene->GetGameObject(i)->SetPosition(glm::vec3(sin(time) * i * 1000, 0, i * 1000));
+		scene->GetGameObject(i)->SetRotationEuler(glm::vec3(0,time * 50,0));
+	}
 }
 void MeshLoading::Draw() {
 	//draw scene

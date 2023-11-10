@@ -3,6 +3,12 @@
 #include <fstream>
 #include <sstream>
 #include "ShaderProgram.h"
+
+
+
+
+
+
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -150,12 +156,13 @@ void Mesh::InitialiseFromFile(std::string filename)
 		aiProcess_Triangulate |
 		aiProcess_CalcTangentSpace |
 		aiProcess_FlipUVs
-		);
+	);
 	//load meshes we find
-	std::vector<aiMesh*> meshes;
+
+	std::vector<aiMesh*> aiMeshes;
 
 	for (int i = 0; i < scene->mNumMeshes; i++) {
-		meshes.push_back(scene->mMeshes[i]);
+		aiMeshes.push_back(scene->mMeshes[i]);
 	}
 
 	std::vector<Vertex> vertices;
@@ -165,7 +172,7 @@ void Mesh::InitialiseFromFile(std::string filename)
 	int numF = 0;
 	int totalVert = 0;
 
-	for (aiMesh* m : meshes) {
+	for (aiMesh* m : aiMeshes) {
 
 		//check if the mesh type is and skip it if it is a line
 		if (m->mPrimitiveTypes & aiPrimitiveType_LINE) continue;
@@ -280,8 +287,6 @@ void Mesh::ApplyPBRMaskMaterial(ShaderProgram* shader)
 	maskMap.Bind(2);
 	shader->bindUniform("maskMap", 2);
 }
-
-
 
 
 void Mesh::LoadSpecularMaterial(std::string filename)
@@ -419,16 +424,12 @@ void Mesh::LoadPBRMaskMaterial(std::string filename)
 	}
 }
 
-
-
-
-
 void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCount, const std::vector<unsigned int>& indices)
 {
 	glm::vec4* tan1 = new glm::vec4[vertexCount * 2];
 	glm::vec4* tan2 = tan1 + vertexCount;
 	memset(tan1, 0, vertexCount * sizeof(glm::vec4) * 2);
-	
+
 	unsigned int indexCount = (unsigned int)indices.size();
 	for (unsigned int a = 0; a < indexCount; a += 3) {
 		long i1 = indices[a];
@@ -476,3 +477,119 @@ void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCo
 	}
 	delete[] tan1;
 }
+
+
+#pragma region Model
+
+Model::Model(Model& model)
+{
+
+}
+
+void Model::Draw()
+{
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		
+		meshes[i]->Draw();
+	}
+}
+
+void Model::InitialiseMeshFromFile(std::string filename)
+{
+
+	//read vertices from model
+	//aiPostProcessSteps steps = aiPro
+	const aiScene* scene = aiImportFile(filename.c_str(),
+		aiProcess_Triangulate |
+		aiProcess_CalcTangentSpace |
+		aiProcess_FlipUVs
+	);
+	//load meshes we find
+
+	std::vector<aiMesh*> aiMeshes;
+
+	for (int i = 0; i < scene->mNumMeshes; i++) {
+		aiMeshes.push_back(scene->mMeshes[i]);
+	}
+
+	std::vector<Mesh::Vertex> vertices;
+	std::vector<unsigned int> indices;
+
+	int numV = 0;
+	int numF = 0;
+	int totalVert = 0;
+
+	for (aiMesh* m : aiMeshes) {
+
+		Mesh* mesh = new Mesh();
+
+		//check if the mesh type is and skip it if it is a line
+		if (m->mPrimitiveTypes & aiPrimitiveType_LINE) continue;
+
+		//get faces and vertices of the current mesh
+		numF = m->mNumFaces;
+		numV = m->mNumVertices;
+
+
+		for (int i = 0; i < numF; i++)
+		{
+			//generate triangle
+			indices.push_back(m->mFaces[i].mIndices[0] + totalVert);
+			indices.push_back(m->mFaces[i].mIndices[2] + totalVert);
+			indices.push_back(m->mFaces[i].mIndices[1] + totalVert);
+
+			//generate second triangle for quads
+			if (m->mFaces[i].mNumIndices == 4) {
+				indices.push_back(m->mFaces[i].mIndices[0] + totalVert);
+				indices.push_back(m->mFaces[i].mIndices[3] + totalVert);
+				indices.push_back(m->mFaces[i].mIndices[2] + totalVert);
+			}
+		}
+
+		//extract vertex data
+		for (int i = 0; i < numV; i++)
+		{
+			//position
+			Mesh::Vertex vert = Mesh::Vertex{ glm::vec4(m->mVertices[i].x, m->mVertices[i].y, m->mVertices[i].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
+			//normals
+			vert.normal = glm::vec4(m->mNormals[i].x, m->mNormals[i].y, m->mNormals[i].z, 0);
+			//UV's
+			if (m->mTextureCoords[0]) {
+				vert.texCoord = glm::vec2(m->mTextureCoords[0][i].x, m->mTextureCoords[0][i].y);
+			}
+			else
+				vert.texCoord = glm::vec2(0);
+			//add vertex
+			//tangents
+			if (m->HasTangentsAndBitangents()) {
+				vert.tangent = glm::vec4(m->mTangents[i].x, m->mTangents[i].y, m->mTangents[i].z, 1);
+			}
+			if (!m->HasTangentsAndBitangents()) {
+				mesh->CalculateTangents(vertices, numV, indices);
+			}
+			vertices.push_back(vert);
+		}
+		mesh->Initialise(numV, vertices.data(), indices.size(), indices.data());
+		meshes.push_back(mesh);
+	}
+}
+
+void Model::LoadMaterials() {
+	for (int i = 0; i < meshes.size(); i++)
+	{
+		switch (shaderType)
+		{
+		case Model::PBR:
+			meshes[i]->LoadPBRMaterial(materialFileNames[i]);
+			break;
+		case Model::PBRMask:
+			meshes[i]->LoadPBRMaskMaterial(materialFileNames[i]);
+			break;
+		case Model::Specular:
+			meshes[i]->LoadSpecularMaterial(materialFileNames[i]);
+			break;
+		}
+	}
+}
+#pragma endregion
