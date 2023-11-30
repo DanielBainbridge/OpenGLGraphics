@@ -39,6 +39,22 @@ public:
 	0,1,0,0,
 	0,0,1,0,
 	0,0,0,1 };
+	glm::vec2 UVTiling = { 1,1 };
+	glm::vec2 UVOffset = {0,0};
+	glm::vec2 maskUVTiling = {1,1};
+	glm::vec2 maskUVOffset = {0,0};
+	glm::vec2 emissiveUVTiling = {1,1};
+	glm::vec2 emissiveUVOffset = { 0,0 };
+	float emissiveIntensity = 0;
+	glm::vec2 metallicUVTiling = {1,1};
+	glm::vec2 metallicUVOffset = {0,0};
+	glm::vec2 AOUVTiling = {1,1};
+	glm::vec2 AOUVOffset = {0,0};
+	glm::vec2 roughnessUVTiling = {1,1};
+	glm::vec2 roughnessUVOffset = {0,0};
+	glm::vec2 normalUVTiling = {1,1};
+	glm::vec2 normalUVOffset = {0,0};
+
 
 protected:
 
@@ -70,6 +86,7 @@ protected:
 	float ao;
 
 	Texture albedoMap;
+	Texture emissiveMap;
 	Texture normalMap;
 	Texture metallicMap;
 	Texture roughnessMap;

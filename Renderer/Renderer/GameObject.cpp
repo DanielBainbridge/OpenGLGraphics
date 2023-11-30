@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Light.h"
+#include "IMGUI_include.h"
+
 
 GameObject::GameObject(glm::mat4 transform, Mesh* mesh, ShaderProgram* shaderProgram)
 {
@@ -81,4 +83,46 @@ void GameObject::Draw(Scene* scene)
 
 	mesh->ApplyMaterial(this->shader);
 	mesh->Draw();
+}
+
+void GameObject::DrawIMGUI()
+{
+
+	//do stuff inside this window
+
+	//transform information position, rotation, scale
+
+
+
+	//drop down of all models
+
+	//if model != null, get list of all meshes, for each mesh have drop down for material to use
+
+	auto UVTiling = mesh->UVTiling;
+	if (ImGui::DragFloat2((name + "Tiling").c_str(), &UVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
+		mesh->UVTiling = UVTiling;
+	}
+
+	auto UVOffset = mesh->UVOffset;
+	if (ImGui::DragFloat2((name + "Offset").c_str(), &UVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
+		mesh->UVOffset = UVOffset;
+	}
+
+	auto EmissiveUVTiling = mesh->emissiveUVTiling;
+	if (ImGui::DragFloat2((name + "Emissive Tiling").c_str(), &EmissiveUVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
+		mesh->emissiveUVTiling = EmissiveUVTiling;
+	}
+
+	auto EmissiveUVOffset = mesh->emissiveUVOffset;
+	if (ImGui::DragFloat2((name + "Emissive Offset").c_str(), &EmissiveUVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
+		mesh->emissiveUVOffset = EmissiveUVOffset;
+	}
+	auto EmissiveIntensity = mesh->emissiveIntensity;
+	if (ImGui::DragFloat((name + "Emissive Intensity").c_str(), &EmissiveIntensity, 0.05f, 0, 10, "%.2f", 1.0f)) {
+		mesh->emissiveIntensity = EmissiveIntensity;
+	}
+
+	//each mesh check if it is using PBR mask PBR or specular, have tiling and offset options and emission options for each.
+
+	//have hot reload game object button that loads model and such
 }

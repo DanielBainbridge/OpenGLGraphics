@@ -1,6 +1,7 @@
 #version 460
 
 out vec4 FragColor;
+out vec4 Emission;
 in vec2 _TexCoords;
 in vec4 _Position;
 in vec3 _Normal;
@@ -16,6 +17,17 @@ uniform vec3 AmbientColour; // ambient light colour
 uniform vec3 LightColour; // light colour
 uniform vec3 LightDirection; // light direction
 
+//Tiling
+uniform vec2 Tiling; // tiling value inversed cause artists
+uniform vec2 UVOffset; // offset of the UV in coordinates
+uniform vec2 NormalTiling;
+uniform vec2 NormalUVOffset;
+uniform vec2 MaskTiling; // this is because artists suck
+uniform vec2 MaskUVOffset; // this is because artists suck
+uniform vec2 EmissiveTiling;
+uniform vec2 EmissiveUVOffset;
+uniform float EmissiveIntensity;
+
 const int MAX_LIGHTS = 4;
 uniform vec3 PointLightColour[MAX_LIGHTS];
 uniform vec3 PointLightPosition[MAX_LIGHTS];
@@ -23,6 +35,7 @@ uniform vec3 PointLightPosition[MAX_LIGHTS];
 uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D maskMap;
+uniform sampler2D emissiveMap;
 
 
 const float PI = 3.14159265359;
@@ -69,11 +82,13 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 void main()
 {
 
-	vec3 albedo = pow(texture(albedoMap, _TexCoords * 0.5).rgb, vec3(2.2));	
-	vec3 normal = texture(normalMap, _TexCoords).rgb;
-	float metallic = texture(maskMap, _TexCoords).r;	
-	float ao = texture(maskMap, _TexCoords).g;
-	float roughness = texture(maskMap, _TexCoords).b;
+	vec3 albedo = pow(texture(albedoMap, (_TexCoords * Tiling) + UVOffset).rgb, vec3(2.2));	
+	vec3 normal = texture(normalMap, (_TexCoords * NormalTiling) + NormalUVOffset).rgb;
+	float metallic = texture(maskMap, (_TexCoords * MaskTiling) + MaskUVOffset).r;	
+	float ao = texture(maskMap, (_TexCoords * MaskTiling) + MaskUVOffset).g;
+	float roughness = texture(maskMap, (_TexCoords * MaskTiling) + MaskUVOffset).b;
+	
+	vec3 emissive = texture(emissiveMap, (_TexCoords * EmissiveTiling) + EmissiveUVOffset).rgb;
 	
 	
 	vec3 N = normalize(_Normal);
@@ -145,5 +160,5 @@ void main()
 	color = color / (color + vec3(1.0));
 	color = pow(color, vec3(1.0/2.2));	
 	
-	FragColor = vec4(color,  1.0);
+	FragColor = vec4(color, 1.0) + (vec4(emissive, 1.0) * EmissiveIntensity);
 }

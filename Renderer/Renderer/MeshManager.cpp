@@ -15,7 +15,14 @@ namespace Managers {
 	}
 	void MeshManager::DrawImgui()
 	{
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
+		//do stuff inside this window
+
+
+		ImGui::Render();
 	}
 
 	MeshManager* MeshManager::meshManager = nullptr;

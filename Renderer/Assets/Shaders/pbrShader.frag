@@ -15,6 +15,20 @@ const int MAX_LIGHTS = 4;
 uniform vec3 PointLightColour[MAX_LIGHTS];
 uniform vec3 PointLightPosition[MAX_LIGHTS];
 
+//Tiling
+uniform float Tiling; // tiling value inversed cause artists
+uniform vec2 UVOffset; // offset of the UV in coordinates
+uniform vec2 NormalTiling;
+uniform vec2 NormalUVOffset;
+uniform vec2 MetallicTiling;
+uniform vec2 MetallicUVOffset;
+uniform vec2 RoughnessTiling;
+uniform vec2 RoughnessUVOffset;
+uniform vec2 AOTiling;
+uniform vec2 AOUVOffset;
+uniform vec2 EmissiveTiling;
+uniform vec2 EmissiveUVOffset;
+uniform float EmissiveIntesity;
 
 uniform vec3 albedo;
 uniform float metallic;
@@ -72,11 +86,11 @@ float GeometrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 void main()
 {
 
-	vec3 albedo = pow(texture(albedoMap, _TexCoords).rgb, vec3(2.2));
+	vec3 albedo = pow(texture(albedoMap, _TexCoords * (1/Tiling) + UVOffset)).rgb, vec3(2.2));
 	
-	float metallic = texture(metallicMap, _TexCoords).r;
-	float roughness = texture(roughnessMap, _TexCoords).r;
-	float ao = texture(aoMap, _TexCoords).r;
+	float metallic = texture(metallicMap, _TexCoords * (1/MetallicTiling) + MetallicUVOffset).r;
+	float roughness = texture(roughnessMap, _TexCoords * (1/RoughnessTiling) + RoughnessUVOffset).r;
+	float ao = texture(aoMap, (_TexCoords * (1/AOTiling) + AOUVOffset)).r;
 	
 	
 	vec3 N = normalize(_Normal);
@@ -84,7 +98,7 @@ void main()
 	vec3 B = normalize(_BiTangent);
 	
 	mat3 TBN = mat3(T,B,N);
-	vec3 normal = texture(normalMap, _TexCoords).rgb;
+	vec3 normal = texture(normalMap, _TexCoords *  (1/NormalTiling) + NormalUVOffset)).rgb;
 	N = TBN * (normal * 2 - 1);
 
 	vec3 V = (normalize(CameraPosition - _Position.xyz));

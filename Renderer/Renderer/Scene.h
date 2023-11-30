@@ -15,6 +15,7 @@ public:
 	void Draw();
 	void AddGameObject(GameObject* instance);
 	GameObject* GetGameObject(int location);
+	std::vector<GameObject*> GetGameObjects() { return gameObjects; };
 	int GameObjectCount() { return gameObjects.size(); };
 	Camera* GetCamera() { return camera; };
 	glm::vec2 GetWindowSize() { return windowSize; };
@@ -24,10 +25,10 @@ public:
 	glm::vec3* GetPointLightPositions() { return &pointLightPositions[0]; };
 	glm::vec3* GetPointLightColours() { return &pointLightColours[0]; };
 	std::vector<Light*> GetPointLights() { return pointLights; };
-	
+
 	void AddPointLight(Light* light);
 	void SetAmbientLight(glm::vec3 light) { ambientLight = light; };
-	
+
 
 protected:
 	Camera* camera;

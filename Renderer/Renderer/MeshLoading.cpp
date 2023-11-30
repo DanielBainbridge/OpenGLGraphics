@@ -68,14 +68,16 @@ MeshLoading::MeshLoading() {
 	spiderInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
 	scene->AddGameObject(spiderInstance);*/
 
-	Mesh* mite = new Mesh();
-	mite->SetPBR(true);
-	mite->InitialiseFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
-	mite->LoadPBRMaskMaterial("Textures\\Mite\\MiteMaterial.mat");
-	GameObject* miteInstance = new GameObject(mite->quadTransform, mite, &this->PBRShader);
-	miteInstance->SetPosition({ -1000, 0, -1000 });
-	miteInstance->SetScale(glm::vec3(10, 10, 10));
-	scene->AddGameObject(miteInstance);
+	//Mesh* mite = new Mesh();
+	//mite->SetPBR(true);
+	//mite->InitialiseFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	//mite->LoadPBRMaskMaterial("Textures\\Mite\\MiteMaterial.mat");
+	//GameObject* miteInstance = new GameObject(mite->quadTransform, mite, &this->PBRShader);
+	//miteInstance->SetPosition({ -1000, 0, -1000 });
+	//miteInstance->SetScale(glm::vec3(10, 10, 10));
+	//scene->AddGameObject(miteInstance);
+	//miteInstance->name = "Mite";
+
 
 	Mesh* slug = new Mesh();
 	slug->SetPBR(true);
@@ -85,16 +87,17 @@ MeshLoading::MeshLoading() {
 	slugInstance->SetPosition({ 1000, 0, -1000 });
 	slugInstance->SetScale(glm::vec3(10, 10, 10));
 	scene->AddGameObject(slugInstance);
+	slugInstance->name = "Slug";
 
-	Mesh* wasp = new Mesh();
-	wasp->SetPBR(true);
-	wasp->InitialiseFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
-	wasp->LoadPBRMaskMaterial("Textures\\Wasp\\WaspMaterial.mat");
-	GameObject* waspInstance = new GameObject(wasp->quadTransform, wasp, &this->PBRShader);
-	waspInstance->SetPosition({ -1000, 0, 1000 });
-	waspInstance->SetScale(glm::vec3(1000, 1000, 1000));
-	waspInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
-	scene->AddGameObject(waspInstance);
+	//Mesh* wasp = new Mesh();
+	//wasp->SetPBR(true);
+	//wasp->InitialiseFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	//wasp->LoadPBRMaskMaterial("Textures\\Wasp\\WaspMaterial.mat");
+	//GameObject* waspInstance = new GameObject(wasp->quadTransform, wasp, &this->PBRShader);
+	//waspInstance->SetPosition({ -1000, 0, 1000 });
+	//waspInstance->SetScale(glm::vec3(1000, 1000, 1000));
+	//waspInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
+	//scene->AddGameObject(waspInstance);
 
 
 
@@ -151,7 +154,7 @@ void MeshLoading::Update() {
 	}
 	auto tempColour = scene->GetPointLights()[0]->GetRawColour();
 	if (ImGui::DragFloat3("Light 1 Colour", &tempColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
-		scene->GetPointLights()[0]->SetColour(tempColour, 50000000);
+		scene->GetPointLights()[0]->SetColour(tempColour, 500000000);
 	}
 
 	auto tempPos2 = scene->GetPointLights()[1]->GetDirection();
@@ -160,12 +163,14 @@ void MeshLoading::Update() {
 	}
 	auto tempColour2 = scene->GetPointLights()[1]->GetRawColour();
 	if (ImGui::DragFloat3("Light 2 Colour", &tempColour2[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
-		scene->GetPointLights()[1]->SetColour(tempColour2, 50000000);
+		scene->GetPointLights()[1]->SetColour(tempColour2, 500000000);
 	}
 
 	auto directionalLightSpeedMultiplier = directionalLightSpeed;
 	if (ImGui::DragFloat("Directional Light Speed", &directionalLightSpeedMultiplier, 0.01f, 0, 10, "%.2f", 1.0f)) {
 		directionalLightSpeed = directionalLightSpeedMultiplier;
+		scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(directionalLightSpeed), 0.5f, (float)cos(directionalLightSpeed))));
+
 	}
 	auto directionalLightIntense = directionalLightIntensity;
 	if (ImGui::DragFloat("Directional Light Intensity", &directionalLightIntense, 1.0f, 0, 1000, "%.2f", 1.0f)) {
@@ -176,6 +181,9 @@ void MeshLoading::Update() {
 	if (ImGui::DragFloat3("Directional Light Colour", &directionalLightColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
 		scene->GetDirectionalLight()->SetColour(directionalLightColour, directionalLightIntensity);
 	}
+
+	
+	
 
 
 	//enable disable depth test
@@ -190,17 +198,31 @@ void MeshLoading::Update() {
 		}
 	}
 
+	//enable disable depth test
+	if (ImGui::Button("Light Set Up 1")) {
+		scene->GetPointLights()[0]->SetColour({ 1,1,1 }, 500000000);
+		scene->GetPointLights()[0]->SetDirection({ 1000,1000,1000 });
+		scene->GetPointLights()[1]->SetColour({ 0,0,0.5f }, 500000000);
+		scene->GetPointLights()[1]->SetDirection({ -1000,-1000,-1000 });
+		scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(1), 0.75f, (float)cos(0))));
+	}
+
+	for (int i = 0; i < scene->GetGameObjects().size(); i++)
+	{
+		scene->GetGameObject(i)->DrawIMGUI();
+	}
+
 	//render imgui
 	ImGui::Render();
 
 	//update directional light direction
-	float time = glfwGetTime();
-	scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(time * directionalLightSpeed), 0, (float)cos(time * directionalLightSpeed))));
-	for (int i = 0; i < scene->GameObjectCount(); i++)
+	//float time = glfwGetTime();
+	//scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(directionalLightSpeed), 0.5f, (float)cos(directionalLightSpeed))));
+	/*for (int i = 0; i < scene->GameObjectCount(); i++)
 	{
 		scene->GetGameObject(i)->SetPosition(glm::vec3(sin(time) * i * 1000, 0, i * 1000));
 		scene->GetGameObject(i)->SetRotationEuler(glm::vec3(0,time * 50,0));
-	}
+	}*/
 }
 void MeshLoading::Draw() {
 	//draw scene

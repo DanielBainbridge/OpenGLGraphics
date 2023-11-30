@@ -13,9 +13,12 @@ public:
 	void SetRotationEuler(glm::vec3 eulerAngles);
 	void SetScale(glm::vec3 scale);
 	void Draw(Scene* scene);
+	void DrawIMGUI();
+	std::string name;
 	ShaderProgram* shader;
+	Mesh* mesh;
+	//Model* model;
 protected:
 	glm::mat4 transform;
-	Mesh* mesh;
 	glm::vec3 position, rotation, scale;
 };

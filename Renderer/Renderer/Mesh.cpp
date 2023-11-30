@@ -276,6 +276,22 @@ void Mesh::ApplyPBRMaterial(ShaderProgram* shader)
 	shader->bindUniform("roughnessMap", 3);
 	aoMap.Bind(4);
 	shader->bindUniform("aoMap", 4);
+	emissiveMap.Bind(5);
+	shader->bindUniform("emissiveMap", 5);
+
+	shader->bindUniform("Tiling", UVTiling);
+	shader->bindUniform("UVOffset", UVOffset);
+	shader->bindUniform("NormalTiling", normalUVTiling);
+	shader->bindUniform("NormalUVOffset", normalUVOffset);
+	shader->bindUniform("MetallicTiling", metallicUVTiling);
+	shader->bindUniform("MetallicUVOffset", metallicUVOffset);
+	shader->bindUniform("RoughnessTiling", roughnessUVTiling);
+	shader->bindUniform("RoughnessUVOffset", roughnessUVOffset);
+	shader->bindUniform("AOTiling", AOUVTiling);
+	shader->bindUniform("AOUVOffset", AOUVOffset);
+	shader->bindUniform("EmissiveTiling", emissiveUVTiling);
+	shader->bindUniform("EmissiveUVOffset", emissiveUVOffset);
+	shader->bindUniform("EmissiveIntensity", emissiveIntensity);
 }
 
 void Mesh::ApplyPBRMaskMaterial(ShaderProgram* shader)
@@ -286,6 +302,19 @@ void Mesh::ApplyPBRMaskMaterial(ShaderProgram* shader)
 	shader->bindUniform("normalMap", 1);
 	maskMap.Bind(2);
 	shader->bindUniform("maskMap", 2);
+	emissiveMap.Bind(3);
+	shader->bindUniform("emissiveMap", 3);
+
+
+	shader->bindUniform("Tiling", UVTiling);
+	shader->bindUniform("UVOffset", UVOffset);
+	shader->bindUniform("NormalTiling", normalUVTiling);
+	shader->bindUniform("NormalUVOffset", normalUVOffset);
+	shader->bindUniform("MaskTiling", maskUVTiling);
+	shader->bindUniform("MaskUVOffset", maskUVOffset);
+	shader->bindUniform("EmissiveTiling", emissiveUVTiling);
+	shader->bindUniform("EmissiveUVOffset", emissiveUVOffset);
+	shader->bindUniform("EmissiveIntensity", emissiveIntensity);
 }
 
 
@@ -327,6 +356,11 @@ void Mesh::LoadSpecularMaterial(std::string filename)
 			std::string mapFileName;
 			ss >> header >> mapFileName;
 			mapNormal.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("emissiveMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			emissiveMap.LoadFromFile((directory + mapFileName).c_str());
 		}
 	}
 }
@@ -380,6 +414,11 @@ void Mesh::LoadPBRMaterial(std::string filename)
 			ss >> header >> mapFileName;
 			aoMap.LoadFromFile((directory + mapFileName).c_str());
 		}
+		else if (line.find("emissiveMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			emissiveMap.LoadFromFile((directory + mapFileName).c_str());
+		}
 	}
 }
 void Mesh::LoadPBRMaskMaterial(std::string filename)
@@ -420,6 +459,11 @@ void Mesh::LoadPBRMaskMaterial(std::string filename)
 			std::string mapFileName;
 			ss >> header >> mapFileName;
 			maskMap.LoadFromFile((directory + mapFileName).c_str());
+		}
+		else if (line.find("emissiveMap") == 0) {
+			std::string mapFileName;
+			ss >> header >> mapFileName;
+			emissiveMap.LoadFromFile((directory + mapFileName).c_str());
 		}
 	}
 }
