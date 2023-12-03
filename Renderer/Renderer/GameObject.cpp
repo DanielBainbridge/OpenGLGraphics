@@ -7,13 +7,11 @@
 #include "IMGUI_include.h"
 
 
-GameObject::GameObject(glm::mat4 transform, Mesh* mesh, ShaderProgram* shaderProgram)
+GameObject::GameObject(glm::mat4 transform, Model* model, ShaderProgram* shaderProgram)
 {
 	this->transform = transform;
-	this->mesh = mesh;
+	this->model = model;
 	shader = shaderProgram;
-	scale = { mesh->quadTransform[0].x, mesh->quadTransform[1].y, mesh->quadTransform[2].z };
-	position = { mesh->quadTransform[0].w, mesh->quadTransform[1].w, mesh->quadTransform[2].w };
 }
 
 void GameObject::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale)
@@ -81,48 +79,82 @@ void GameObject::Draw(Scene* scene)
 	shader->bindUniform("PointLightPosition", numLights, scene->GetPointLightPositions());
 	shader->bindUniform("PointLightColour", numLights, scene->GetPointLightColours());
 
-	mesh->ApplyMaterial(this->shader);
-	mesh->Draw();
+	model->Draw(shader);
 }
 
 void GameObject::DrawIMGUI()
 {
 
 	//do stuff inside this window
+	ImGui::Begin((name + " Object").c_str());
+	ImGui::PushID((name + " Object").c_str());
 
 	//transform information position, rotation, scale
 
+	if (ImGui::CollapsingHeader("Transform")) {
+		auto guiPosition = position;
+		if (ImGui::DragFloat3("Position", &guiPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
+			SetPosition(guiPosition);
+		}
+		auto guiRotation = rotation;
+		if (ImGui::DragFloat3("Rotation", &guiRotation[0], 0.5f, -180, 180, "%.2f", 1.0f)) {
+			SetRotationEuler(guiRotation);
+		}
+		auto guiScale = scale;
+		if (ImGui::DragFloat3("Scale", &guiScale[0], 0.1f, 0.01f, 1000, "%0.2f", 1.0f)) {
+			SetScale(guiScale);
+		}
+	}
 
-
+	ImGui::Separator();
 	//drop down of all models
 
+	if (ImGui::CollapsingHeader("Model Meshes")) {
+		if (ImGui::Button("Load Materials")) {
+			model->LoadMaterials();
+		}
+		for (int i = 0; i < model->GetMeshes().size(); i++)
+		{
+			if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i)).c_str())) {
+
+				auto materialString = model->GetMaterialFileNames()[i];
+				if (ImGui::InputText((name + "Mesh: " + std::to_string(i) +  " Material").c_str(), &materialString)) {
+					model->SetMaterial(i, materialString);
+				}				
+
+				auto UVTiling = model->GetMeshes()[i]->UVTiling;
+				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Tiling").c_str(), &UVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
+					model->GetMeshes()[i]->UVTiling = UVTiling;
+				}
+
+				auto UVOffset = model->GetMeshes()[i]->UVOffset;
+				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Offset").c_str(), &UVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
+					model->GetMeshes()[i]->UVOffset = UVOffset;
+				}
+
+				auto EmissiveUVTiling = model->GetMeshes()[i]->emissiveUVTiling;
+				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Emissive Tiling").c_str(), &EmissiveUVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
+					model->GetMeshes()[i]->emissiveUVTiling = EmissiveUVTiling;
+				}
+
+				auto EmissiveUVOffset = model->GetMeshes()[i]->emissiveUVOffset;
+				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Emissive Offset").c_str(), &EmissiveUVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
+					model->GetMeshes()[i]->emissiveUVOffset = EmissiveUVOffset;
+				}
+				auto EmissiveIntensity = model->GetMeshes()[i]->emissiveIntensity;
+				if (ImGui::DragFloat((name + "Mesh: " + std::to_string(i) + " Emissive Intensity").c_str(), &EmissiveIntensity, 0.05f, 0, 10, "%.2f", 1.0f)) {
+					model->GetMeshes()[i]->emissiveIntensity = EmissiveIntensity;
+				}
+			}
+		}
+	}
+
 	//if model != null, get list of all meshes, for each mesh have drop down for material to use
-
-	auto UVTiling = mesh->UVTiling;
-	if (ImGui::DragFloat2((name + "Tiling").c_str(), &UVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
-		mesh->UVTiling = UVTiling;
-	}
-
-	auto UVOffset = mesh->UVOffset;
-	if (ImGui::DragFloat2((name + "Offset").c_str(), &UVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
-		mesh->UVOffset = UVOffset;
-	}
-
-	auto EmissiveUVTiling = mesh->emissiveUVTiling;
-	if (ImGui::DragFloat2((name + "Emissive Tiling").c_str(), &EmissiveUVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
-		mesh->emissiveUVTiling = EmissiveUVTiling;
-	}
-
-	auto EmissiveUVOffset = mesh->emissiveUVOffset;
-	if (ImGui::DragFloat2((name + "Emissive Offset").c_str(), &EmissiveUVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
-		mesh->emissiveUVOffset = EmissiveUVOffset;
-	}
-	auto EmissiveIntensity = mesh->emissiveIntensity;
-	if (ImGui::DragFloat((name + "Emissive Intensity").c_str(), &EmissiveIntensity, 0.05f, 0, 10, "%.2f", 1.0f)) {
-		mesh->emissiveIntensity = EmissiveIntensity;
-	}
 
 	//each mesh check if it is using PBR mask PBR or specular, have tiling and offset options and emission options for each.
 
 	//have hot reload game object button that loads model and such
+	ImGui::PopID();
+	ImGui::End();
+
 }

@@ -22,7 +22,7 @@ public:
 	virtual void Draw();
 	//takes an array of vertices,a count of vertices
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indicies);
-	void InitialiseFromFile(std::string filename);
+	static Mesh* InitialiseFromAiMesh(aiMesh* meshToLoad);
 	void SetPosition(glm::vec3 position);
 	void ApplyMaterial(ShaderProgram* shader);
 	void ApplySpecularMaterial(ShaderProgram* shader);
@@ -55,10 +55,10 @@ public:
 	glm::vec2 normalUVTiling = {1,1};
 	glm::vec2 normalUVOffset = {0,0};
 
+	bool isPBR = false;
 
 protected:
 
-	bool isPBR = false;
 	std::vector<std::string> materials;
 	unsigned int triCount;
 	//vertex array object, vertex buffer object, index buffer object
@@ -107,15 +107,17 @@ public:
 	};
 	Model() {};
 	Model(Model& model);
+	std::vector<Mesh*> GetMeshes() { return meshes; };
 	~Model();
-	virtual void Draw();
-	ShaderType shaderType;
-
+	virtual void Draw(ShaderProgram* shader);
+	ShaderType shaderType = PBRMask;
+	void InitialiseMeshFromFile(std::string filename);
+	void SetMaterial(int materialLocation, std::string filename);
+	std::vector<std::string> GetMaterialFileNames() { return materialFileNames; }
+	void LoadMaterials();
 
 private:
 	std::vector<Mesh*> meshes;
 	std::vector<std::string> materialFileNames;
 
-	void InitialiseMeshFromFile(std::string filename);
-	void LoadMaterials();
 };

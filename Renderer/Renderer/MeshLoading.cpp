@@ -79,13 +79,12 @@ MeshLoading::MeshLoading() {
 	//miteInstance->name = "Mite";
 
 
-	Mesh* slug = new Mesh();
-	slug->SetPBR(true);
-	slug->InitialiseFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
-	slug->LoadPBRMaskMaterial("Textures\\Slug\\SlugMaterial.mat");
-	GameObject* slugInstance = new GameObject(slug->quadTransform, slug, &this->PBRShader);
-	slugInstance->SetPosition({ 1000, 0, -1000 });
-	slugInstance->SetScale(glm::vec3(10, 10, 10));
+	Model* slug = new Model();
+	slug->shaderType == Model::ShaderType::PBRMask;
+	slug->InitialiseMeshFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
+	GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
+	slugInstance->SetPosition({ 0, 0, 0 });
+	slugInstance->SetScale(glm::vec3(1, 1, 1));
 	scene->AddGameObject(slugInstance);
 	slugInstance->name = "Slug";
 
@@ -145,6 +144,7 @@ void MeshLoading::Update() {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+
 
 	//do imgui buttons
 

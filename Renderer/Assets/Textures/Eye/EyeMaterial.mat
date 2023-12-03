@@ -1,0 +1,11 @@
+#
+#
+#
+
+newmtl _Eye_MAT
+illum 2
+	
+albedoMap TEX_CHA_BaseMap_Eye.tga
+normalMap TEX_CHA_Normal_Eye.tga
+maskMap TEX_CHA_MaskMap_Eye.tga
+emissiveMap TEX_CHA_Emissive_Eye.tga
