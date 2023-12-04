@@ -5,7 +5,7 @@
 newmtl _Spider_MAT
 illum 2
 
-albedoMap TEX_CHA_BaseMap_Mite.tga
+albedoMap TEX_CHA_BaseMap_Alt_Mite.tga
 normalMap TEX_CHA_Normal_Mite.tga
 maskMap TEX_CHA_MaskMap_Mite.tga
 emissiveMap TEX_CHA_Emissive_Mite.tga

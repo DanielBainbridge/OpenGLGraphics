@@ -58,26 +58,23 @@ MeshLoading::MeshLoading() {
 
 #pragma region PBRMeshes
 
-	/*Mesh* spider = new Mesh();
-	spider->SetPBR(true);
-	spider->InitialiseFromFile("PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
-	spider->LoadPBRMaskMaterial("PBR\\Spider\\Materials\\SpiderMaterial.mat");
-	GameObject* spiderInstance = new GameObject(spider->quadTransform, spider, &this->PBRShader);
-	spiderInstance->SetPosition({ 1000, 0, 1000 });
-	spiderInstance->SetScale(glm::vec3(1000, 1000, 1000));
-	spiderInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
-	scene->AddGameObject(spiderInstance);*/
+	Model* spider = new Model();
+	spider->shaderType == Model::ShaderType::PBRMask;
+	spider->InitialiseMeshFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
+	GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
+	spiderInstance->SetPosition({ 0, 0, 0 });
+	spiderInstance->SetScale(glm::vec3(1, 1, 1));
+	scene->AddGameObject(spiderInstance);
+	spiderInstance->name = "Spider";
 
-	//Mesh* mite = new Mesh();
-	//mite->SetPBR(true);
-	//mite->InitialiseFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
-	//mite->LoadPBRMaskMaterial("Textures\\Mite\\MiteMaterial.mat");
-	//GameObject* miteInstance = new GameObject(mite->quadTransform, mite, &this->PBRShader);
-	//miteInstance->SetPosition({ -1000, 0, -1000 });
-	//miteInstance->SetScale(glm::vec3(10, 10, 10));
-	//scene->AddGameObject(miteInstance);
-	//miteInstance->name = "Mite";
-
+	Model* mite = new Model();
+	mite->shaderType == Model::ShaderType::PBRMask;
+	mite->InitialiseMeshFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
+	miteInstance->SetPosition({ 0, 0, 0 });
+	miteInstance->SetScale(glm::vec3(1, 1, 1));
+	scene->AddGameObject(miteInstance);
+	miteInstance->name = "Mite";
 
 	Model* slug = new Model();
 	slug->shaderType == Model::ShaderType::PBRMask;
@@ -88,17 +85,17 @@ MeshLoading::MeshLoading() {
 	scene->AddGameObject(slugInstance);
 	slugInstance->name = "Slug";
 
-	//Mesh* wasp = new Mesh();
-	//wasp->SetPBR(true);
-	//wasp->InitialiseFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
-	//wasp->LoadPBRMaskMaterial("Textures\\Wasp\\WaspMaterial.mat");
-	//GameObject* waspInstance = new GameObject(wasp->quadTransform, wasp, &this->PBRShader);
-	//waspInstance->SetPosition({ -1000, 0, 1000 });
-	//waspInstance->SetScale(glm::vec3(1000, 1000, 1000));
-	//waspInstance->SetRotationEuler(glm::vec3(-90, 0, 0));
-	//scene->AddGameObject(waspInstance);
 
+	Model* wasp = new Model();
+	wasp->shaderType == Model::ShaderType::PBRMask;
+	wasp->InitialiseMeshFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
+	waspInstance->SetPosition({ 0, 0, 0 });
+	waspInstance->SetScale(glm::vec3(1, 1, 1));
+	scene->AddGameObject(waspInstance);
+	waspInstance->name = "Wasp";
 
+	SetCurrentGameObject(spiderInstance);
 
 #pragma endregion
 
@@ -182,8 +179,8 @@ void MeshLoading::Update() {
 		scene->GetDirectionalLight()->SetColour(directionalLightColour, directionalLightIntensity);
 	}
 
-	
-	
+
+
 
 
 	//enable disable depth test
@@ -207,10 +204,8 @@ void MeshLoading::Update() {
 		scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(1), 0.75f, (float)cos(0))));
 	}
 
-	for (int i = 0; i < scene->GetGameObjects().size(); i++)
-	{
-		scene->GetGameObject(i)->DrawIMGUI();
-	}
+	currentSelectedGameObject->DrawIMGUI();
+
 
 	//render imgui
 	ImGui::Render();

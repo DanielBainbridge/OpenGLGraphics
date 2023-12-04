@@ -8,3 +8,4 @@ illum 2
 albedoMap TEX_CHA_BaseMap_Wasp.tga
 normalMap TEX_CHA_Normal_Wasp.tga
 maskMap TEX_CHA_MaskMap_Wasp.tga
+emissiveMap TEX_CHA_Emissive_Wasp.tga

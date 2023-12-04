@@ -7,6 +7,7 @@ class Scene;
 class MeshLoading : public Application {
 public:
 	MeshLoading();
+	void SetCurrentGameObject(GameObject* gO) { currentSelectedGameObject = gO; };
 	~MeshLoading();
 	virtual void Update() override;
 	virtual void Draw() override;
@@ -15,5 +16,5 @@ private:
 	bool depthTestEnable = true;
 	float directionalLightSpeed = 1;
 	float directionalLightIntensity = 1;
-
+	GameObject* currentSelectedGameObject = nullptr;
 };

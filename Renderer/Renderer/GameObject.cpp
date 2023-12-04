@@ -91,17 +91,17 @@ void GameObject::DrawIMGUI()
 
 	//transform information position, rotation, scale
 
-	if (ImGui::CollapsingHeader("Transform")) {
+	if (ImGui::CollapsingHeader("Game Object Transform")) {
 		auto guiPosition = position;
-		if (ImGui::DragFloat3("Position", &guiPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
+		if (ImGui::DragFloat3("Game Object Position", &guiPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
 			SetPosition(guiPosition);
 		}
 		auto guiRotation = rotation;
-		if (ImGui::DragFloat3("Rotation", &guiRotation[0], 0.5f, -180, 180, "%.2f", 1.0f)) {
+		if (ImGui::DragFloat3("Game Object Rotation", &guiRotation[0], 0.5f, -180, 180, "%.2f", 1.0f)) {
 			SetRotationEuler(guiRotation);
 		}
 		auto guiScale = scale;
-		if (ImGui::DragFloat3("Scale", &guiScale[0], 0.1f, 0.01f, 1000, "%0.2f", 1.0f)) {
+		if (ImGui::DragFloat3("Game Object Scale", &guiScale[0], 0.1f, 0.01f, 1000, "%0.2f", 1.0f)) {
 			SetScale(guiScale);
 		}
 	}
@@ -115,35 +115,53 @@ void GameObject::DrawIMGUI()
 		}
 		for (int i = 0; i < model->GetMeshes().size(); i++)
 		{
-			if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i)).c_str())) {
+			if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1)).c_str())) {
 
-				auto materialString = model->GetMaterialFileNames()[i];
-				if (ImGui::InputText((name + "Mesh: " + std::to_string(i) +  " Material").c_str(), &materialString)) {
-					model->SetMaterial(i, materialString);
-				}				
-
-				auto UVTiling = model->GetMeshes()[i]->UVTiling;
-				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Tiling").c_str(), &UVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
-					model->GetMeshes()[i]->UVTiling = UVTiling;
+				if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1) + "Transform").c_str())) {
+					auto guiMeshPosition = model->GetMeshes()[i]->position;
+					if (ImGui::DragFloat3(("Mesh: " + std::to_string(i + 1) + " Position").c_str(), &guiMeshPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
+						model->GetMeshes()[i]->SetPosition(guiMeshPosition);
+					}
+					auto guiMeshRotation = model->GetMeshes()[i]->rotation;
+					if (ImGui::DragFloat3(("Mesh: " + std::to_string(i + 1) + " Rotation").c_str(), &guiMeshRotation[0], 0.5f, -180, 180, "%.2f", 1.0f)) {
+						model->GetMeshes()[i]->SetRotationEuler(guiMeshRotation);
+					}
+					auto guiMeshScale = model->GetMeshes()[i]->scale;
+					if (ImGui::DragFloat3(("Mesh: " + std::to_string(i + 1) + " Scale").c_str(), &guiMeshScale[0], 0.1f, 0.01f, 1000, "%0.2f", 1.0f)) {
+						model->GetMeshes()[i]->SetScale(guiMeshScale);
+					}
 				}
 
-				auto UVOffset = model->GetMeshes()[i]->UVOffset;
-				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Offset").c_str(), &UVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
-					model->GetMeshes()[i]->UVOffset = UVOffset;
-				}
+				if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1) + "Material").c_str())) {
 
-				auto EmissiveUVTiling = model->GetMeshes()[i]->emissiveUVTiling;
-				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Emissive Tiling").c_str(), &EmissiveUVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
-					model->GetMeshes()[i]->emissiveUVTiling = EmissiveUVTiling;
-				}
+					auto materialString = model->GetMaterialFileNames()[i];
+					if (ImGui::InputText((name + "Mesh: " + std::to_string(i + 1) + " Material").c_str(), &materialString)) {
+						model->SetMaterial(i, materialString);
+					}
 
-				auto EmissiveUVOffset = model->GetMeshes()[i]->emissiveUVOffset;
-				if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i) + " Emissive Offset").c_str(), &EmissiveUVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
-					model->GetMeshes()[i]->emissiveUVOffset = EmissiveUVOffset;
-				}
-				auto EmissiveIntensity = model->GetMeshes()[i]->emissiveIntensity;
-				if (ImGui::DragFloat((name + "Mesh: " + std::to_string(i) + " Emissive Intensity").c_str(), &EmissiveIntensity, 0.05f, 0, 10, "%.2f", 1.0f)) {
-					model->GetMeshes()[i]->emissiveIntensity = EmissiveIntensity;
+					auto UVTiling = model->GetMeshes()[i]->UVTiling;
+					if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i + 1) + " Tiling").c_str(), &UVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
+						model->GetMeshes()[i]->UVTiling = UVTiling;
+					}
+
+					auto UVOffset = model->GetMeshes()[i]->UVOffset;
+					if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i + 1) + " Offset").c_str(), &UVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
+						model->GetMeshes()[i]->UVOffset = UVOffset;
+					}
+
+					auto EmissiveUVTiling = model->GetMeshes()[i]->emissiveUVTiling;
+					if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i + 1) + " Emissive Tiling").c_str(), &EmissiveUVTiling[0], 0.05f, 0.01f, 10, "%.2f", 1.0f)) {
+						model->GetMeshes()[i]->emissiveUVTiling = EmissiveUVTiling;
+					}
+
+					auto EmissiveUVOffset = model->GetMeshes()[i]->emissiveUVOffset;
+					if (ImGui::DragFloat2((name + "Mesh: " + std::to_string(i + 1) + " Emissive Offset").c_str(), &EmissiveUVOffset[0], 0.5f, 0, 1, "%.2f", 1.0f)) {
+						model->GetMeshes()[i]->emissiveUVOffset = EmissiveUVOffset;
+					}
+					auto EmissiveIntensity = model->GetMeshes()[i]->emissiveIntensity;
+					if (ImGui::DragFloat((name + "Mesh: " + std::to_string(i + 1) + " Emissive Intensity").c_str(), &EmissiveIntensity, 0.05f, 0, 10, "%.2f", 1.0f)) {
+						model->GetMeshes()[i]->emissiveIntensity = EmissiveIntensity;
+					}
 				}
 			}
 		}

@@ -23,7 +23,10 @@ public:
 	//takes an array of vertices,a count of vertices
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indicies);
 	static Mesh* InitialiseFromAiMesh(aiMesh* meshToLoad);
+	void SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale);
 	void SetPosition(glm::vec3 position);
+	void SetRotationEuler(glm::vec3 eulerAngles);
+	void SetScale(glm::vec3 scale);
 	void ApplyMaterial(ShaderProgram* shader);
 	void ApplySpecularMaterial(ShaderProgram* shader);
 	void ApplyPBRMaterial(ShaderProgram* shader);
@@ -56,6 +59,7 @@ public:
 	glm::vec2 normalUVOffset = {0,0};
 
 	bool isPBR = false;
+	glm::vec3 position, rotation, scale;
 
 protected:
 

@@ -8,3 +8,4 @@ illum 2
 albedoMap TEX_CHA_BaseColour_BigSpider.tga
 normalMap TEX_CHA_Normal_BigSpider.tga
 maskMap TEX_CHA_MaskMap_BigSpider.tga
+emissiveMap TEX_CHA_Emissive_BigSpider.tga
