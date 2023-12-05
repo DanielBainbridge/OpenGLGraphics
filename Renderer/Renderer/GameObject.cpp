@@ -92,6 +92,7 @@ void GameObject::DrawIMGUI()
 	//transform information position, rotation, scale
 
 	if (ImGui::CollapsingHeader("Game Object Transform")) {
+		ImGui::Indent();
 		auto guiPosition = position;
 		if (ImGui::DragFloat3("Game Object Position", &guiPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
 			SetPosition(guiPosition);
@@ -104,20 +105,25 @@ void GameObject::DrawIMGUI()
 		if (ImGui::DragFloat3("Game Object Scale", &guiScale[0], 0.1f, 0.01f, 1000, "%0.2f", 1.0f)) {
 			SetScale(guiScale);
 		}
+		ImGui::Unindent();
 	}
 
 	ImGui::Separator();
 	//drop down of all models
 
 	if (ImGui::CollapsingHeader("Model Meshes")) {
+
 		if (ImGui::Button("Load Materials")) {
 			model->LoadMaterials();
 		}
 		for (int i = 0; i < model->GetMeshes().size(); i++)
 		{
+			ImGui::Indent();
 			if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1)).c_str())) {
 
-				if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1) + "Transform").c_str())) {
+				ImGui::Indent();
+				if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1) + " Transform").c_str())) {
+					ImGui::Indent();
 					auto guiMeshPosition = model->GetMeshes()[i]->position;
 					if (ImGui::DragFloat3(("Mesh: " + std::to_string(i + 1) + " Position").c_str(), &guiMeshPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
 						model->GetMeshes()[i]->SetPosition(guiMeshPosition);
@@ -130,9 +136,13 @@ void GameObject::DrawIMGUI()
 					if (ImGui::DragFloat3(("Mesh: " + std::to_string(i + 1) + " Scale").c_str(), &guiMeshScale[0], 0.1f, 0.01f, 1000, "%0.2f", 1.0f)) {
 						model->GetMeshes()[i]->SetScale(guiMeshScale);
 					}
+					ImGui::Unindent();
 				}
 
-				if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1) + "Material").c_str())) {
+
+				if (ImGui::CollapsingHeader(("Mesh: " + std::to_string(i + 1) + " Material").c_str())) {
+
+					ImGui::Indent();
 
 					auto materialString = model->GetMaterialFileNames()[i];
 					if (ImGui::InputText((name + "Mesh: " + std::to_string(i + 1) + " Material").c_str(), &materialString)) {
@@ -162,9 +172,14 @@ void GameObject::DrawIMGUI()
 					if (ImGui::DragFloat((name + "Mesh: " + std::to_string(i + 1) + " Emissive Intensity").c_str(), &EmissiveIntensity, 0.05f, 0, 10, "%.2f", 1.0f)) {
 						model->GetMeshes()[i]->emissiveIntensity = EmissiveIntensity;
 					}
+					ImGui::Unindent();
+
 				}
+				ImGui::Unindent();
 			}
+			ImGui::Unindent();
 		}
+
 	}
 
 	//if model != null, get list of all meshes, for each mesh have drop down for material to use

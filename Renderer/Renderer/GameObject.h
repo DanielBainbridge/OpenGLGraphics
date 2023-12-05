@@ -17,7 +17,7 @@ public:
 	void DrawIMGUI();
 	std::string name;
 	ShaderProgram* shader;
-	Model* model;
+	Model* model = nullptr;
 protected:
 	glm::mat4 transform;
 	glm::vec3 position, rotation, scale;
