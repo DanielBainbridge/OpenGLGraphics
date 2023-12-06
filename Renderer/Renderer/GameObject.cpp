@@ -1,5 +1,6 @@
 #include "GameObject.h"
 #include "Mesh.h"
+#include "Model.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Scene.h"

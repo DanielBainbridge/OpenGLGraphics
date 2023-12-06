@@ -60,7 +60,7 @@ MeshLoading::MeshLoading() {
 
 	Model* spider = new Model();
 	spider->shaderType == Model::ShaderType::PBRMask;
-	spider->InitialiseMeshFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
+	spider->InitialiseModelFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
 	GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
 	spiderInstance->SetPosition({ 0, 0, 0 });
 	spiderInstance->SetScale(glm::vec3(1, 1, 1));
@@ -69,7 +69,7 @@ MeshLoading::MeshLoading() {
 
 	Model* mite = new Model();
 	mite->shaderType == Model::ShaderType::PBRMask;
-	mite->InitialiseMeshFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
 	GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
 	miteInstance->SetPosition({ 0, 0, 0 });
 	miteInstance->SetScale(glm::vec3(1, 1, 1));
@@ -78,7 +78,7 @@ MeshLoading::MeshLoading() {
 
 	Model* slug = new Model();
 	slug->shaderType == Model::ShaderType::PBRMask;
-	slug->InitialiseMeshFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
+	slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
 	GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
 	slugInstance->SetPosition({ 0, 0, 0 });
 	slugInstance->SetScale(glm::vec3(1, 1, 1));
@@ -88,7 +88,7 @@ MeshLoading::MeshLoading() {
 
 	Model* wasp = new Model();
 	wasp->shaderType == Model::ShaderType::PBRMask;
-	wasp->InitialiseMeshFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
 	GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
 	waspInstance->SetPosition({ 0, 0, 0 });
 	waspInstance->SetScale(glm::vec3(1, 1, 1));

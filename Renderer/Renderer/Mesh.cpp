@@ -1,8 +1,10 @@
 #include "Mesh.h"
+#include "Model.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "ShaderProgram.h"
+#include "assimp_glm_helpers.h"
 
 
 
@@ -128,6 +130,14 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glEnableVertexAttribArray(3);
 	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)40);
 
+	//enable fifth element as bone ID
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+
+	//enable sixth element as weights
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
+
 	//bind indicies
 	if (indexCount != 0) {
 		glGenBuffers(1, &ibo);
@@ -148,11 +158,13 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad)
+Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model)
 {
 	Mesh* newMesh = new Mesh();
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<unsigned int> indices;
+
+	newMesh->modelOwner = model;
 
 	int numV = 0;
 	int numF = 0;
@@ -188,7 +200,7 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad)
 	for (int i = 0; i < numV; i++)
 	{
 		//position
-		Mesh::Vertex vert = Mesh::Vertex{ glm::vec4(meshToLoad->mVertices[i].x, meshToLoad->mVertices[i].y, meshToLoad->mVertices[i].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
+		Vertex vert = Vertex{ glm::vec4(meshToLoad->mVertices[i].x, meshToLoad->mVertices[i].y, meshToLoad->mVertices[i].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
 		//normals
 		vert.normal = glm::vec4(meshToLoad->mNormals[i].x, meshToLoad->mNormals[i].y, meshToLoad->mNormals[i].z, 0);
 		//UV's
@@ -205,11 +217,36 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad)
 		if (!meshToLoad->HasTangentsAndBitangents()) {
 			newMesh->CalculateTangents(vertices, numV, indices);
 		}
+
+
+		newMesh->SetVertexBoneDataToDefault(vert);
+
+		vert.position = glm::vec4(AssimpGLMHelpers::GetGLMVec(meshToLoad->mVertices[i]), 1);
+		vert.normal = glm::vec4(AssimpGLMHelpers::GetGLMVec(meshToLoad->mVertices[i]), 0);
+
 		vertices.push_back(vert);
+
 	}
 
 	newMesh->Initialise(totalVert, vertices.data(), indices.size(), indices.data());
 	return newMesh;
+}
+
+void Mesh::SetVertexBoneData(Mesh::Vertex& vertex, int boneID, float weight) {
+	for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+	{
+		if (vertex.boneIDs[i] < 0) {
+			vertex.weights[i] = weight;
+			vertex.boneIDs[i] = boneID;
+		}
+	}
+}
+void Mesh::SetVertexBoneDataToDefault(Mesh::Vertex& vertex)
+{
+	for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+		vertex.boneIDs[i] = -1;
+		vertex.weights[i] = 0.0f;
+	}
 }
 
 void Mesh::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale)
@@ -539,76 +576,4 @@ void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCo
 }
 
 
-#pragma region Model
 
-Model::Model(Model& model)
-{
-
-}
-
-void Model::Draw(ShaderProgram* shader)
-{
-	for (int i = 0; i < meshes.size(); i++)
-	{
-		meshes[i]->ApplyMaterial(shader);
-		meshes[i]->Draw();
-	}
-}
-
-void Model::InitialiseMeshFromFile(std::string filename)
-{
-	//read vertices from model
-	//aiPostProcessSteps steps = aiPro
-	const aiScene* scene = aiImportFile(filename.c_str(),
-		aiProcess_Triangulate |
-		aiProcess_CalcTangentSpace |
-		aiProcess_FlipUVs
-	);
-	//load meshes we find
-
-	if (scene == nullptr) {
-		std::cout << "Failed To Load: " << filename << std::endl;
-		meshes.clear();
-		meshes.reserve(0);
-		return;
-	}
-
-	std::vector<aiMesh*> aiMeshes;
-
-	for (int i = 0; i < scene->mNumMeshes; i++) {
-		aiMeshes.push_back(scene->mMeshes[i]);
-	}
-
-	for (int i = 0; i < aiMeshes.size(); i++)
-	{		
-		meshes.push_back(Mesh::InitialiseFromAiMesh(aiMeshes[i]));
-	}
-	materialFileNames.resize(meshes.size());
-}
-
-void Model::SetMaterial(int materialLocation, std::string filename)
-{
-	materialFileNames[materialLocation] = filename;
-}
-
-void Model::LoadMaterials() {
-	for (int i = 0; i < meshes.size(); i++)
-	{
-		std::cout << "Material:" << i << materialFileNames[i] << std::endl;
-		switch (shaderType)
-		{
-		case Model::PBR:
-			meshes[i]->LoadPBRMaterial(materialFileNames[i]);
-			meshes[i]->isPBR = true;
-			break;
-		case Model::PBRMask:
-			meshes[i]->LoadPBRMaskMaterial(materialFileNames[i]);
-			meshes[i]->isPBR = true;
-			break;
-		case Model::Specular:
-			meshes[i]->LoadSpecularMaterial(materialFileNames[i]);
-			break;
-		}
-	}
-}
-#pragma endregion
