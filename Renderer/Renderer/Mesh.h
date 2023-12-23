@@ -27,6 +27,11 @@ public:
 		float weights[MAX_BONE_INFLUENCE];
 	};
 
+	struct BoneInfo {
+		int id;
+		glm::mat4 offset;
+	};
+
 	void InitialiseQuad();
 	virtual void Draw();
 	//takes an array of vertices,a count of vertices
@@ -50,6 +55,10 @@ public:
 
 	void SetVertexBoneDataToDefault(Vertex& vertex);
 	void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
+
+	auto& GetBoneMap() { return boneMap; };
+	int& GetBoneCount() { return boneCounter; };
+	void ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh);
 
 
 	glm::mat4 quadTransform =
@@ -76,6 +85,8 @@ public:
 	bool isPBR = false;
 	glm::vec3 position, rotation, scale;
 
+	aiMesh* aiMeshRef;
+
 protected:
 	Model* modelOwner;
 	std::vector<std::string> materials;
@@ -83,6 +94,10 @@ protected:
 	//vertex array object, vertex buffer object, index buffer object
 	unsigned int vao, vbo, ibo;
 	std::vector<Vertex> vertices;
+
+
+	std::map<std::string, BoneInfo> boneMap;
+	int boneCounter = 0;
 
 #pragma region SpecularVariables
 

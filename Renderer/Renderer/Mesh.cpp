@@ -6,11 +6,6 @@
 #include "ShaderProgram.h"
 #include "assimp_glm_helpers.h"
 
-
-
-
-
-
 Mesh::~Mesh()
 {
 	glDeleteVertexArrays(1, &vao);
@@ -229,6 +224,7 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model)
 	}
 
 	newMesh->Initialise(totalVert, vertices.data(), indices.size(), indices.data());
+	newMesh->ExtractBoneWeightForVertices(vertices, meshToLoad);
 	return newMesh;
 }
 
@@ -241,6 +237,7 @@ void Mesh::SetVertexBoneData(Mesh::Vertex& vertex, int boneID, float weight) {
 		}
 	}
 }
+
 void Mesh::SetVertexBoneDataToDefault(Mesh::Vertex& vertex)
 {
 	for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
@@ -291,7 +288,6 @@ void Mesh::SetScale(glm::vec3 scale)
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
 		* glm::scale(glm::mat4(1), scale);
 }
-
 
 void Mesh::ApplyMaterial(ShaderProgram* shader)
 {
@@ -369,7 +365,6 @@ void Mesh::ApplyPBRMaskMaterial(ShaderProgram* shader)
 	shader->bindUniform("EmissiveUVOffset", emissiveUVOffset);
 	shader->bindUniform("EmissiveIntensity", emissiveIntensity);
 }
-
 
 void Mesh::LoadSpecularMaterial(std::string filename)
 {
@@ -474,6 +469,7 @@ void Mesh::LoadPBRMaterial(std::string filename)
 		}
 	}
 }
+
 void Mesh::LoadPBRMaskMaterial(std::string filename)
 {
 	std::fstream file(filename.c_str(), std::ios::in);
@@ -575,5 +571,35 @@ void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCo
 	delete[] tan1;
 }
 
+void Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh)
+{
+	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
+	{
+		int boneID = -1;
+		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+		if (boneMap.find(boneName) == boneMap.end()) {
+			BoneInfo newBone;
+			newBone.id = boneCounter;
+			newBone.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
+			boneMap[boneName] = newBone;
+			boneID = boneCounter;
+			boneCounter++;
+		}
+		else {
+			boneID = boneMap[boneName].id;
+		}
+		assert(boneID != -1);
+		auto weights = mesh->mBones[boneIndex]->mWeights;
+		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+		for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
+		{
+			int vertexId = weights[weightIndex].mVertexId;
+			float weight = weights[weightIndex].mWeight;
+			assert(vertexId <= vertices.size());
+			SetVertexBoneData(vertices[vertexId], boneID, weight);
+		}
+	}
+}
 
 

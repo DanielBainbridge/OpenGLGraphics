@@ -17,11 +17,6 @@ public:
 		Specular
 	};
 
-	struct Bone {
-		int id;
-		glm::mat4 offset;
-	};
-
 	Model() {};
 	Model(Model& model);
 	~Model();
@@ -33,17 +28,9 @@ public:
 	void SetMaterial(int materialLocation, std::string filename);
 	std::vector<std::string> GetMaterialFileNames() { return materialFileNames; }
 	void LoadMaterials();
-	auto& GetBoneMap() { return boneMap; };
-	int& GetBoneCount() { return boneCounter; };
-	void ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh, const aiScene* scene, Mesh* wholeMesh);
 
 private:
 	std::vector<Mesh*> meshes;
 	std::vector<std::string> materialFileNames;
-	std::map<std::string, Bone> boneMap;
-	int boneCounter = 0;
-
-
-
 
 };

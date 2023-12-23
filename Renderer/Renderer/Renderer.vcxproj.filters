@@ -106,6 +106,15 @@
     <ClCompile Include="Model.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -202,6 +211,15 @@
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
       <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>

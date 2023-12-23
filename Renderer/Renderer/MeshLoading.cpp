@@ -4,6 +4,8 @@
 #include "Light.h"
 #include "IMGUI_include.h"
 #include <iostream>
+#include "Animation.h"
+#include "Animator.h"
 
 MeshLoading::MeshLoading() {
 
@@ -67,33 +69,33 @@ MeshLoading::MeshLoading() {
 	scene->AddGameObject(spiderInstance);
 	spiderInstance->name = "Spider";
 
-	Model* mite = new Model();
-	mite->shaderType == Model::ShaderType::PBRMask;
-	mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
-	GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
-	miteInstance->SetPosition({ 0, 0, 0 });
-	miteInstance->SetScale(glm::vec3(1, 1, 1));
-	scene->AddGameObject(miteInstance);
-	miteInstance->name = "Mite";
+	//Model* mite = new Model();
+	//mite->shaderType == Model::ShaderType::PBRMask;
+	//mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	//GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
+	//miteInstance->SetPosition({ 0, 0, 0 });
+	//miteInstance->SetScale(glm::vec3(1, 1, 1));
+	//scene->AddGameObject(miteInstance);
+	//miteInstance->name = "Mite";
 
-	Model* slug = new Model();
-	slug->shaderType == Model::ShaderType::PBRMask;
-	slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
-	GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
-	slugInstance->SetPosition({ 0, 0, 0 });
-	slugInstance->SetScale(glm::vec3(1, 1, 1));
-	scene->AddGameObject(slugInstance);
-	slugInstance->name = "Slug";
+	//Model* slug = new Model();
+	//slug->shaderType == Model::ShaderType::PBRMask;
+	//slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
+	//GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
+	//slugInstance->SetPosition({ 0, 0, 0 });
+	//slugInstance->SetScale(glm::vec3(1, 1, 1));
+	//scene->AddGameObject(slugInstance);
+	//slugInstance->name = "Slug";
 
 
-	Model* wasp = new Model();
-	wasp->shaderType == Model::ShaderType::PBRMask;
-	wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
-	GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
-	waspInstance->SetPosition({ 0, 0, 0 });
-	waspInstance->SetScale(glm::vec3(1, 1, 1));
-	scene->AddGameObject(waspInstance);
-	waspInstance->name = "Wasp";
+	//Model* wasp = new Model();
+	//wasp->shaderType == Model::ShaderType::PBRMask;
+	//wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	//GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
+	//waspInstance->SetPosition({ 0, 0, 0 });
+	//waspInstance->SetScale(glm::vec3(1, 1, 1));
+	//scene->AddGameObject(waspInstance);
+	//waspInstance->name = "Wasp";
 
 	SetCurrentGameObject(spiderInstance);
 
@@ -124,8 +126,8 @@ MeshLoading::MeshLoading() {
 	scene->GetDirectionalLight()->SetColour({ 1 ,1 ,1 }, 1);
 	scene->SetAmbientLight({ 0.75f, 0.75f, 0.75f });
 
-	Light* redLight = new Light({ 600,300,0 }, { 1,0,0 }, 500000);
-	Light* blueLight = new Light({ -650,100, 0 }, { 1,0,1 }, 500000);
+	Light* redLight = new Light({ 600,300,0 }, { 1,0,0 }, 50000000);
+	Light* blueLight = new Light({ -650,100, 0 }, { 1,0,1 }, 50000000);
 
 	scene->AddPointLight(redLight);
 	scene->AddPointLight(blueLight);
@@ -178,10 +180,6 @@ void MeshLoading::Update() {
 	if (ImGui::DragFloat3("Directional Light Colour", &directionalLightColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
 		scene->GetDirectionalLight()->SetColour(directionalLightColour, directionalLightIntensity);
 	}
-
-
-
-
 
 	//enable disable depth test
 	if (ImGui::Button("Depth Test On/Off")) {

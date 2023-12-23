@@ -47,8 +47,6 @@ void Model::InitialiseModelFromFile(std::string filename)
 	for (int i = 0; i < aiMeshes.size(); i++)
 	{
 		meshes.push_back(Mesh::InitialiseFromAiMesh(aiMeshes[i], this));
-		ExtractBoneWeightForVertices(meshes[i]->GetVertices(), aiMeshes[i], scene, meshes[i]);
-
 	}
 	materialFileNames.resize(meshes.size());
 }
@@ -78,38 +76,5 @@ void Model::LoadMaterials() {
 		}
 	}
 }
-
-void Model::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh, const aiScene* scene, Mesh* wholeMesh)
-{
-	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
-	{
-		int boneID = -1;
-		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
-		if (boneMap.find(boneName) == boneMap.end()) {
-			Bone newBone;
-			newBone.id = boneCounter;
-			newBone.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
-			boneMap[boneName] = newBone;
-			boneID = boneCounter;
-			boneCounter++;
-		}
-		else {
-			boneID = boneMap[boneName].id;
-		}
-		assert(boneID != -1);
-		auto weights = mesh->mBones[boneIndex]->mWeights;
-		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
-
-		for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
-		{
-			int vertexId = weights[weightIndex].mVertexId;
-			float weight = weights[weightIndex].mWeight;
-			assert(vertexId <= vertices.size());
-			wholeMesh->SetVertexBoneData(vertices[vertexId], boneID, weight);
-		}
-	}
-}
-
-
 
 #pragma endregion
