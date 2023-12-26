@@ -49,7 +49,7 @@ bool Application::StartUp() {
 	glEnable(GL_CULL_FACE);
 	//glEnable(GL_STENCIL);
 	
-	glad_glClearColor(0.1, 0.1, 0.1, 1);
+	glad_glClearColor(0.65f, 0.65f, 0.65f, 1);
 
 	//setup camera
 	camera = new Camera(3.141592 / 6, 1.5f, 16000);

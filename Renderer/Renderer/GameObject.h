@@ -1,6 +1,8 @@
 #pragma once
 #include "Graphics.h"
 #include "Application.h"
+
+class Animator;
 class Mesh;
 class Model;
 class ShaderProgram;
@@ -13,6 +15,7 @@ public:
 	void SetPosition(glm::vec3 position);
 	void SetRotationEuler(glm::vec3 eulerAngles);
 	void SetScale(glm::vec3 scale);
+	void Update(float deltaTime);
 	void Draw(Scene* scene);
 	void DrawIMGUI();
 	std::string name;

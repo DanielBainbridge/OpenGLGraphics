@@ -1,4 +1,6 @@
 #include "Model.h"
+#include "Animation.h"
+#include "Animator.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -13,15 +15,25 @@ Model::Model(Model& model)
 
 void Model::Draw(ShaderProgram* shader)
 {
+
 	for (int i = 0; i < meshes.size(); i++)
-	{
+	{		
+		if (skinnedMesh) {
+			auto transforms = animator->GetFinalBoneMatrices();
+			for (int j = 0; j < transforms.size(); j++)
+			{
+				shader->bindUniform("FinalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+			}
+		}
 		meshes[i]->ApplyMaterial(shader);
 		meshes[i]->Draw();
 	}
 }
 
-void Model::InitialiseModelFromFile(std::string filename)
+void Model::InitialiseModelFromFile(std::string filename, bool isSkinned)
 {
+	skinnedMesh = isSkinned;
+
 	//read vertices from model
 	//aiPostProcessSteps steps = aiPro
 	const aiScene* scene = aiImportFile(filename.c_str(),
@@ -43,10 +55,13 @@ void Model::InitialiseModelFromFile(std::string filename)
 	for (int i = 0; i < scene->mNumMeshes; i++) {
 		aiMeshes.push_back(scene->mMeshes[i]);
 	}
-
-	for (int i = 0; i < aiMeshes.size(); i++)
-	{
-		meshes.push_back(Mesh::InitialiseFromAiMesh(aiMeshes[i], this));
+	//load animations here with aiscene, fix up mesh cpp and h
+	for (int i = 0; i < aiMeshes.size(); i++)	{
+		meshes.push_back(Mesh::InitialiseFromAiMesh(aiMeshes[i], this, isSkinned));
+		if (isSkinned) {
+			animations.push_back(new Animation(filename, meshes[i]));
+			animator = new Animator((animations[0]));
+		}
 	}
 	materialFileNames.resize(meshes.size());
 }

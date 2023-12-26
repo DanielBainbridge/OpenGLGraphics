@@ -1,4 +1,8 @@
 #include "Animator.h"
+#include "Bone.h"
+#include "Animation.h"
+#include <iostream>
+
 
 Animator::Animator(Animation* animation)
 {
@@ -16,6 +20,7 @@ void Animator::UpdateAnimation(float deltaTime)
 {
 	this->deltaTime = deltaTime;
 	if (currentAnimation) {
+
 		currentTime += currentAnimation->GetTicksPerSecond() * deltaTime;
 		currentTime = fmod(currentTime, currentAnimation->GetDuration());
 		CalculateBoneTransform(&currentAnimation->GetRootNode(), glm::mat4(1.0f));

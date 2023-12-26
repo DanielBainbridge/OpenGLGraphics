@@ -36,7 +36,7 @@ public:
 	virtual void Draw();
 	//takes an array of vertices,a count of vertices
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indicies);
-	static Mesh* InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model);
+	static Mesh* InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model, bool isSkinned = false);
 	void SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale);
 	void SetPosition(glm::vec3 position);
 	void SetRotationEuler(glm::vec3 eulerAngles);
@@ -58,7 +58,7 @@ public:
 
 	auto& GetBoneMap() { return boneMap; };
 	int& GetBoneCount() { return boneCounter; };
-	void ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh);
+	std::vector<Vertex> ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh);
 
 
 	glm::mat4 quadTransform =

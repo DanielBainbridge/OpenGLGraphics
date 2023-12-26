@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "Model.h"
+#include "Animation.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -111,27 +112,26 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 	//enable first element as position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	//enable second element as normal
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
 	//enable third element as texture coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
 	//enable fourth element as tangent
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)40);
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
 
 	//enable fifth element as bone ID
 	glEnableVertexAttribArray(4);
-	glVertexAttribPointer(4, 4, GL_INT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+	glVertexAttribIPointer(4, 4, GL_INT, sizeof(Vertex), (void*)(offsetof(Vertex, boneIDs)));
 
 	//enable sixth element as weights
 	glEnableVertexAttribArray(5);
-	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, weights));
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, weights)));
 
 	//bind indicies
 	if (indexCount != 0) {
@@ -153,7 +153,7 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model)
+Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model, bool isSkinned)
 {
 	Mesh* newMesh = new Mesh();
 	std::vector<Mesh::Vertex> vertices;
@@ -213,8 +213,9 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model)
 			newMesh->CalculateTangents(vertices, numV, indices);
 		}
 
-
-		newMesh->SetVertexBoneDataToDefault(vert);
+		if (isSkinned) {
+			newMesh->SetVertexBoneDataToDefault(vert);
+		}
 
 		vert.position = glm::vec4(AssimpGLMHelpers::GetGLMVec(meshToLoad->mVertices[i]), 1);
 		vert.normal = glm::vec4(AssimpGLMHelpers::GetGLMVec(meshToLoad->mVertices[i]), 0);
@@ -223,8 +224,14 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model)
 
 	}
 
+	if (isSkinned) {
+		vertices = newMesh->ExtractBoneWeightForVertices(vertices, meshToLoad);
+	}
+
+
+
 	newMesh->Initialise(totalVert, vertices.data(), indices.size(), indices.data());
-	newMesh->ExtractBoneWeightForVertices(vertices, meshToLoad);
+	
 	return newMesh;
 }
 
@@ -234,6 +241,7 @@ void Mesh::SetVertexBoneData(Mesh::Vertex& vertex, int boneID, float weight) {
 		if (vertex.boneIDs[i] < 0) {
 			vertex.weights[i] = weight;
 			vertex.boneIDs[i] = boneID;
+			break;
 		}
 	}
 }
@@ -571,7 +579,7 @@ void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCo
 	delete[] tan1;
 }
 
-void Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh)
+std::vector<Mesh::Vertex> Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh)
 {
 	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
 	{
@@ -600,6 +608,7 @@ void Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMe
 			SetVertexBoneData(vertices[vertexId], boneID, weight);
 		}
 	}
+	return vertices;
 }
 
 

@@ -2,7 +2,11 @@
 
 float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
-	return 0.0f;
+	float scaleFactor = 0.0f;
+	float midWayLength = animationTime - lastTimeStamp;
+	float framesDiff = nextTimeStamp - lastTimeStamp;
+	scaleFactor = midWayLength / framesDiff;
+	return scaleFactor;
 }
 
 glm::mat4 Bone::InterpolatePosition(float animationTime)
@@ -65,8 +69,8 @@ int Bone::GetPositionIndex(float animationTime)
 		{
 			return index;
 		}
-		assert(0);
 	}
+	assert(0);
 }
 
 int Bone::GetRotationIndex(float animationTime)
@@ -77,8 +81,8 @@ int Bone::GetRotationIndex(float animationTime)
 		{
 			return index;
 		}
-		assert(0);
 	}
+	assert(0);
 }
 
 int Bone::GetScaleIndex(float animationTime)
@@ -89,6 +93,6 @@ int Bone::GetScaleIndex(float animationTime)
 		{
 			return index;
 		}
-		assert(0);
 	}
+	assert(0);
 }

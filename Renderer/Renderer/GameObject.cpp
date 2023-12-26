@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Mesh.h"
 #include "Model.h"
+#include "Animator.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Scene.h"
@@ -56,6 +57,13 @@ void GameObject::SetScale(glm::vec3 scale)
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
 		* glm::scale(glm::mat4(1), scale);
+}
+
+void GameObject::Update(float deltaTime)
+{
+	if (model->GetAnimator()) {
+		model->GetAnimator()->UpdateAnimation(deltaTime);
+	}
 }
 
 void GameObject::Draw(Scene* scene)
@@ -183,7 +191,7 @@ void GameObject::DrawIMGUI()
 
 	}
 
-	//if model != null, get list of all meshes, for each mesh have drop down for material to use
+	//if model != null, get list of all meshes, for each mesh have drop down for material to usea
 
 	//each mesh check if it is using PBR mask PBR or specular, have tiling and offset options and emission options for each.
 

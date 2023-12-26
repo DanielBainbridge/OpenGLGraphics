@@ -12,6 +12,18 @@ Animation::Animation(const std::string& animationPath, Mesh* mesh)
 	ReadMissingBones(animation, *mesh);
 }
 
+Bone* Animation::FindBone(const std::string& name)
+{
+	auto iter = std::find_if(bones.begin(), bones.end(),
+		[&](const Bone& Bone)
+		{
+			return Bone.GetBoneName() == name;
+		}
+	);
+	if (iter == bones.end()) return nullptr;
+	else return &(*iter);
+}
+
 void Animation::ReadMissingBones(const aiAnimation* animation, Mesh& mesh)
 {
 	int size = animation->mNumChannels;

@@ -62,12 +62,14 @@ MeshLoading::MeshLoading() {
 
 	Model* spider = new Model();
 	spider->shaderType == Model::ShaderType::PBRMask;
-	spider->InitialiseModelFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
+	spider->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx", true);
 	GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
 	spiderInstance->SetPosition({ 0, 0, 0 });
 	spiderInstance->SetScale(glm::vec3(1, 1, 1));
 	scene->AddGameObject(spiderInstance);
 	spiderInstance->name = "Spider";
+
+	spider->GetAnimator()->PlayAnimation(spider->GetAnimations()[0]);
 
 	//Model* mite = new Model();
 	//mite->shaderType == Model::ShaderType::PBRMask;
@@ -211,11 +213,10 @@ void MeshLoading::Update() {
 	//update directional light direction
 	//float time = glfwGetTime();
 	//scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(directionalLightSpeed), 0.5f, (float)cos(directionalLightSpeed))));
-	/*for (int i = 0; i < scene->GameObjectCount(); i++)
+	for (int i = 0; i < scene->GameObjectCount(); i++)
 	{
-		scene->GetGameObject(i)->SetPosition(glm::vec3(sin(time) * i * 1000, 0, i * 1000));
-		scene->GetGameObject(i)->SetRotationEuler(glm::vec3(0,time * 50,0));
-	}*/
+		scene->GetGameObject(i)->Update(GetDeltaTime());
+	}
 }
 void MeshLoading::Draw() {
 	//draw scene
