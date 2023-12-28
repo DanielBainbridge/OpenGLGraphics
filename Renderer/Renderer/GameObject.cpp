@@ -1,5 +1,7 @@
 #include "GameObject.h"
 #include "Mesh.h"
+#include "Model.h"
+#include "Animator.h"
 #include "ShaderProgram.h"
 #include "Camera.h"
 #include "Scene.h"
@@ -57,6 +59,13 @@ void GameObject::SetScale(glm::vec3 scale)
 		* glm::scale(glm::mat4(1), scale);
 }
 
+void GameObject::Update(float deltaTime)
+{
+	if (model->GetAnimator()) {
+		model->GetAnimator()->UpdateAnimation(deltaTime);
+	}
+}
+
 void GameObject::Draw(Scene* scene)
 {
 	//enable shader
@@ -79,6 +88,8 @@ void GameObject::Draw(Scene* scene)
 	shader->bindUniform("PointLightPosition", numLights, scene->GetPointLightPositions());
 	shader->bindUniform("PointLightColour", numLights, scene->GetPointLightColours());
 
+	shader->bindUniform("DisplayBoneIndex", displayBoneIndex);
+
 	model->Draw(shader);
 }
 
@@ -88,6 +99,12 @@ void GameObject::DrawIMGUI()
 	//do stuff inside this window
 	ImGui::Begin((name + " Object").c_str());
 	ImGui::PushID((name + " Object").c_str());
+
+	auto newSelectedAnimation = currentAnimationNumber;
+	if (ImGui::DragInt("Selected Animation", &newSelectedAnimation, 1, 0, model->GetAnimations().size() - 1, 0, 0)) {
+		currentAnimationNumber = newSelectedAnimation;
+		model->GetAnimator()->SetCurrentAnimation(model->GetAnimations()[currentAnimationNumber]);
+	}
 
 	//transform information position, rotation, scale
 
@@ -112,6 +129,10 @@ void GameObject::DrawIMGUI()
 	//drop down of all models
 
 	if (ImGui::CollapsingHeader("Model Meshes")) {
+		auto newSelectedBone = displayBoneIndex;
+		if (ImGui::DragInt("Selected Bone", &newSelectedBone, 1, 0, 30, 0, 1.0f)) {
+			displayBoneIndex = newSelectedBone;
+		}
 
 		if (ImGui::Button("Load Materials")) {
 			model->LoadMaterials();
@@ -182,7 +203,7 @@ void GameObject::DrawIMGUI()
 
 	}
 
-	//if model != null, get list of all meshes, for each mesh have drop down for material to use
+	//if model != null, get list of all meshes, for each mesh have drop down for material to usea
 
 	//each mesh check if it is using PBR mask PBR or specular, have tiling and offset options and emission options for each.
 

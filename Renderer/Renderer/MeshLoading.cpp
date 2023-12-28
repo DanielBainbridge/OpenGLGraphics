@@ -4,6 +4,8 @@
 #include "Light.h"
 #include "IMGUI_include.h"
 #include <iostream>
+#include "Animation.h"
+#include "Animator.h"
 
 MeshLoading::MeshLoading() {
 
@@ -60,40 +62,40 @@ MeshLoading::MeshLoading() {
 
 	Model* spider = new Model();
 	spider->shaderType == Model::ShaderType::PBRMask;
-	spider->InitialiseMeshFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx");
+	spider->InitialiseModelFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx", true);
 	GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
 	spiderInstance->SetPosition({ 0, 0, 0 });
 	spiderInstance->SetScale(glm::vec3(1, 1, 1));
 	scene->AddGameObject(spiderInstance);
 	spiderInstance->name = "Spider";
 
-	Model* mite = new Model();
-	mite->shaderType == Model::ShaderType::PBRMask;
-	mite->InitialiseMeshFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
-	GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
-	miteInstance->SetPosition({ 0, 0, 0 });
-	miteInstance->SetScale(glm::vec3(1, 1, 1));
-	scene->AddGameObject(miteInstance);
-	miteInstance->name = "Mite";
+	//Model* mite = new Model();
+	//mite->shaderType == Model::ShaderType::PBRMask;
+	//mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	//GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
+	//miteInstance->SetPosition({ 0, 0, 0 });
+	//miteInstance->SetScale(glm::vec3(1, 1, 1));
+	//scene->AddGameObject(miteInstance);
+	//miteInstance->name = "Mite";
 
-	Model* slug = new Model();
+	/*Model* slug = new Model();
 	slug->shaderType == Model::ShaderType::PBRMask;
-	slug->InitialiseMeshFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
+	slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx", true);
 	GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
 	slugInstance->SetPosition({ 0, 0, 0 });
 	slugInstance->SetScale(glm::vec3(1, 1, 1));
 	scene->AddGameObject(slugInstance);
-	slugInstance->name = "Slug";
+	slugInstance->name = "Slug";*/
 
 
-	Model* wasp = new Model();
-	wasp->shaderType == Model::ShaderType::PBRMask;
-	wasp->InitialiseMeshFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
-	GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
-	waspInstance->SetPosition({ 0, 0, 0 });
-	waspInstance->SetScale(glm::vec3(1, 1, 1));
-	scene->AddGameObject(waspInstance);
-	waspInstance->name = "Wasp";
+	//Model* wasp = new Model();
+	//wasp->shaderType == Model::ShaderType::PBRMask;
+	//wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	//GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
+	//waspInstance->SetPosition({ 0, 0, 0 });
+	//waspInstance->SetScale(glm::vec3(1, 1, 1));
+	//scene->AddGameObject(waspInstance);
+	//waspInstance->name = "Wasp";
 
 	SetCurrentGameObject(spiderInstance);
 
@@ -124,8 +126,8 @@ MeshLoading::MeshLoading() {
 	scene->GetDirectionalLight()->SetColour({ 1 ,1 ,1 }, 1);
 	scene->SetAmbientLight({ 0.75f, 0.75f, 0.75f });
 
-	Light* redLight = new Light({ 600,300,0 }, { 1,0,0 }, 500000);
-	Light* blueLight = new Light({ -650,100, 0 }, { 1,0,1 }, 500000);
+	Light* redLight = new Light({ 600,300,0 }, { 1,0,0 }, 50000000);
+	Light* blueLight = new Light({ -650,100, 0 }, { 1,0,1 }, 50000000);
 
 	scene->AddPointLight(redLight);
 	scene->AddPointLight(blueLight);
@@ -179,10 +181,6 @@ void MeshLoading::Update() {
 		scene->GetDirectionalLight()->SetColour(directionalLightColour, directionalLightIntensity);
 	}
 
-
-
-
-
 	//enable disable depth test
 	if (ImGui::Button("Depth Test On/Off")) {
 		if (depthTestEnable) {
@@ -213,11 +211,10 @@ void MeshLoading::Update() {
 	//update directional light direction
 	//float time = glfwGetTime();
 	//scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(directionalLightSpeed), 0.5f, (float)cos(directionalLightSpeed))));
-	/*for (int i = 0; i < scene->GameObjectCount(); i++)
+	for (int i = 0; i < scene->GameObjectCount(); i++)
 	{
-		scene->GetGameObject(i)->SetPosition(glm::vec3(sin(time) * i * 1000, 0, i * 1000));
-		scene->GetGameObject(i)->SetRotationEuler(glm::vec3(0,time * 50,0));
-	}*/
+		scene->GetGameObject(i)->Update(GetDeltaTime());
+	}
 }
 void MeshLoading::Draw() {
 	//draw scene

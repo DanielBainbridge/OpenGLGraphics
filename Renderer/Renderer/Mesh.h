@@ -4,7 +4,13 @@
 #include <assimp/scene.h>
 #include <assimp/cimport.h>
 #include <assimp/postprocess.h>
+#include <map>
+
+#define MAX_BONE_INFLUENCE 4
+
 class ShaderProgram;
+class Model;
+
 
 class Mesh {
 public:
@@ -16,17 +22,27 @@ public:
 		glm::vec4 normal;
 		glm::vec2 texCoord;
 		glm::vec4 tangent;
+
+		int boneIDs[MAX_BONE_INFLUENCE];
+		float weights[MAX_BONE_INFLUENCE];
+	};
+
+	struct BoneInfo {
+		int id;
+		glm::mat4 offset;
 	};
 
 	void InitialiseQuad();
 	virtual void Draw();
 	//takes an array of vertices,a count of vertices
 	void Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned int indexCount, unsigned int* indicies);
-	static Mesh* InitialiseFromAiMesh(aiMesh* meshToLoad);
+	static Mesh* InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model, bool isSkinned = false);
 	void SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale);
 	void SetPosition(glm::vec3 position);
 	void SetRotationEuler(glm::vec3 eulerAngles);
 	void SetScale(glm::vec3 scale);
+	std::vector<Vertex> GetVertices() { return vertices; };
+	void SetVertices(std::vector<Vertex> verts) { vertices = verts; };
 	void ApplyMaterial(ShaderProgram* shader);
 	void ApplySpecularMaterial(ShaderProgram* shader);
 	void ApplyPBRMaterial(ShaderProgram* shader);
@@ -36,6 +52,14 @@ public:
 	void LoadPBRMaskMaterial(std::string filename);
 	void CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCount, const std::vector<unsigned int>& indices);
 	inline void SetPBR(bool isTrue) { isPBR = isTrue; };
+
+	void SetVertexBoneDataToDefault(Vertex& vertex);
+	void SetVertexBoneData(Vertex& vertex, int boneID, float weight);
+
+	auto& GetBoneMap() { return boneMap; };
+	int& GetBoneCount() { return boneCounter; };
+	std::vector<Vertex> ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh);
+
 
 	glm::mat4 quadTransform =
 	{ 1,0,0,0,
@@ -61,12 +85,19 @@ public:
 	bool isPBR = false;
 	glm::vec3 position, rotation, scale;
 
-protected:
+	aiMesh* aiMeshRef;
 
+protected:
+	Model* modelOwner;
 	std::vector<std::string> materials;
 	unsigned int triCount;
 	//vertex array object, vertex buffer object, index buffer object
 	unsigned int vao, vbo, ibo;
+	std::vector<Vertex> vertices;
+
+
+	std::map<std::string, BoneInfo> boneMap;
+	int boneCounter = 0;
 
 #pragma region SpecularVariables
 
@@ -102,26 +133,3 @@ protected:
 
 };
 
-class Model {
-public:
-	enum ShaderType {
-		PBR,
-		PBRMask,
-		Specular
-	};
-	Model() {};
-	Model(Model& model);
-	std::vector<Mesh*> GetMeshes() { return meshes; };
-	~Model();
-	virtual void Draw(ShaderProgram* shader);
-	ShaderType shaderType = PBRMask;
-	void InitialiseMeshFromFile(std::string filename);
-	void SetMaterial(int materialLocation, std::string filename);
-	std::vector<std::string> GetMaterialFileNames() { return materialFileNames; }
-	void LoadMaterials();
-
-private:
-	std::vector<Mesh*> meshes;
-	std::vector<std::string> materialFileNames;
-
-};

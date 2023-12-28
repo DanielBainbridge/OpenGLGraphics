@@ -103,6 +103,18 @@
     <ClCompile Include="imgui_stdlib.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Bone.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -194,6 +206,21 @@
     </ClInclude>
     <ClInclude Include="imgui_stdlib.h">
       <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="assimp_glm_helpers.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Bone.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

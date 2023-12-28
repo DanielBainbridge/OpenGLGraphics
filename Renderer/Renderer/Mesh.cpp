@@ -1,13 +1,11 @@
 #include "Mesh.h"
+#include "Model.h"
+#include "Animation.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "ShaderProgram.h"
-
-
-
-
-
+#include "assimp_glm_helpers.h"
 
 Mesh::~Mesh()
 {
@@ -114,19 +112,26 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 
 	//enable first element as position
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
-
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
 	//enable second element as normal
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)16);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_TRUE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
 
 	//enable third element as texture coords
 	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)32);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
 	//enable fourth element as tangent
 	glEnableVertexAttribArray(3);
-	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)40);
+	glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
+
+	//enable fifth element as bone ID
+	glEnableVertexAttribArray(4);
+	glVertexAttribIPointer(4, 4, GL_INT, sizeof(Vertex), (void*)(offsetof(Vertex, boneIDs)));
+
+	//enable sixth element as weights
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(offsetof(Vertex, weights)));
 
 	//bind indicies
 	if (indexCount != 0) {
@@ -148,11 +153,13 @@ void Mesh::Initialise(unsigned int vertexCount, const Vertex* vertices, unsigned
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad)
+Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad, Model* model, bool isSkinned)
 {
 	Mesh* newMesh = new Mesh();
 	std::vector<Mesh::Vertex> vertices;
 	std::vector<unsigned int> indices;
+
+	newMesh->modelOwner = model;
 
 	int numV = 0;
 	int numF = 0;
@@ -188,7 +195,7 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad)
 	for (int i = 0; i < numV; i++)
 	{
 		//position
-		Mesh::Vertex vert = Mesh::Vertex{ glm::vec4(meshToLoad->mVertices[i].x, meshToLoad->mVertices[i].y, meshToLoad->mVertices[i].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
+		Vertex vert = Vertex{ glm::vec4(meshToLoad->mVertices[i].x, meshToLoad->mVertices[i].y, meshToLoad->mVertices[i].z, 1), glm::vec4(0,0,0,0), glm::vec2(0,0) };
 		//normals
 		vert.normal = glm::vec4(meshToLoad->mNormals[i].x, meshToLoad->mNormals[i].y, meshToLoad->mNormals[i].z, 0);
 		//UV's
@@ -205,11 +212,46 @@ Mesh* Mesh::InitialiseFromAiMesh(aiMesh* meshToLoad)
 		if (!meshToLoad->HasTangentsAndBitangents()) {
 			newMesh->CalculateTangents(vertices, numV, indices);
 		}
+
+		if (isSkinned) {
+			newMesh->SetVertexBoneDataToDefault(vert);
+		}
+
+		vert.position = glm::vec4(AssimpGLMHelpers::GetGLMVec(meshToLoad->mVertices[i]), 1);
+		vert.normal = glm::vec4(AssimpGLMHelpers::GetGLMVec(meshToLoad->mVertices[i]), 0);
+
 		vertices.push_back(vert);
+
 	}
 
+	if (isSkinned) {
+		vertices = newMesh->ExtractBoneWeightForVertices(vertices, meshToLoad);
+	}
+
+
+
 	newMesh->Initialise(totalVert, vertices.data(), indices.size(), indices.data());
+
 	return newMesh;
+}
+
+void Mesh::SetVertexBoneData(Mesh::Vertex& vertex, int boneID, float weight) {
+	for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
+	{
+		if (vertex.boneIDs[i] < 0) {
+			vertex.weights[i] = weight;
+			vertex.boneIDs[i] = boneID;
+			break;
+		}
+	}
+}
+
+void Mesh::SetVertexBoneDataToDefault(Mesh::Vertex& vertex)
+{
+	for (int i = 0; i < MAX_BONE_INFLUENCE; i++) {
+		vertex.boneIDs[i] = -1;
+		vertex.weights[i] = 0.0f;
+	}
 }
 
 void Mesh::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale)
@@ -254,7 +296,6 @@ void Mesh::SetScale(glm::vec3 scale)
 		* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
 		* glm::scale(glm::mat4(1), scale);
 }
-
 
 void Mesh::ApplyMaterial(ShaderProgram* shader)
 {
@@ -332,7 +373,6 @@ void Mesh::ApplyPBRMaskMaterial(ShaderProgram* shader)
 	shader->bindUniform("EmissiveUVOffset", emissiveUVOffset);
 	shader->bindUniform("EmissiveIntensity", emissiveIntensity);
 }
-
 
 void Mesh::LoadSpecularMaterial(std::string filename)
 {
@@ -437,6 +477,7 @@ void Mesh::LoadPBRMaterial(std::string filename)
 		}
 	}
 }
+
 void Mesh::LoadPBRMaskMaterial(std::string filename)
 {
 	std::fstream file(filename.c_str(), std::ios::in);
@@ -538,77 +579,55 @@ void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCo
 	delete[] tan1;
 }
 
-
-#pragma region Model
-
-Model::Model(Model& model)
+std::vector<Mesh::Vertex> Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh)
 {
-
-}
-
-void Model::Draw(ShaderProgram* shader)
-{
-	for (int i = 0; i < meshes.size(); i++)
+	std::cout << "\n \n \n" << mesh->mName.C_Str() << std::endl;
+	for (int b = 0; b < mesh->mNumBones; b++)
 	{
-		meshes[i]->ApplyMaterial(shader);
-		meshes[i]->Draw();
-	}
-}
-
-void Model::InitialiseMeshFromFile(std::string filename)
-{
-	//read vertices from model
-	//aiPostProcessSteps steps = aiPro
-	const aiScene* scene = aiImportFile(filename.c_str(),
-		aiProcess_Triangulate |
-		aiProcess_CalcTangentSpace |
-		aiProcess_FlipUVs
-	);
-	//load meshes we find
-
-	if (scene == nullptr) {
-		std::cout << "Failed To Load: " << filename << std::endl;
-		meshes.clear();
-		meshes.reserve(0);
-		return;
+		glm::mat4 boneOffset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[b]->mOffsetMatrix);
+		std::cout << "Bone Name: " << mesh->mBones[b]->mName.C_Str() << std::endl;
+		for (int i = 0; i < 4; i++)
+		{			
+				std::cout << "\t";
+			for (int j = 0; j < 4; j++)
+			{
+				std::cout << boneOffset[i][j] << ", ";
+			}
+			std::cout << std::endl;
+		}
+		;
 	}
 
-	std::vector<aiMesh*> aiMeshes;
-
-	for (int i = 0; i < scene->mNumMeshes; i++) {
-		aiMeshes.push_back(scene->mMeshes[i]);
-	}
-
-	for (int i = 0; i < aiMeshes.size(); i++)
-	{		
-		meshes.push_back(Mesh::InitialiseFromAiMesh(aiMeshes[i]));
-	}
-	materialFileNames.resize(meshes.size());
-}
-
-void Model::SetMaterial(int materialLocation, std::string filename)
-{
-	materialFileNames[materialLocation] = filename;
-}
-
-void Model::LoadMaterials() {
-	for (int i = 0; i < meshes.size(); i++)
+	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
 	{
-		std::cout << "Material:" << i << materialFileNames[i] << std::endl;
-		switch (shaderType)
+		int boneID = -1;
+		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
+
+		if (modelOwner->GetBoneMap().find(boneName) == modelOwner->GetBoneMap().end()) {
+			BoneInfo newBone;
+			newBone.id = modelOwner->GetBoneCount();
+			newBone.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[boneIndex]->mOffsetMatrix);
+			modelOwner->GetBoneMap()[boneName] = newBone;
+			boneID = modelOwner->GetBoneCount();
+			modelOwner->GetBoneCount()++;
+			std::cout << "Bone Count = " << modelOwner->GetBoneCount() << std::endl;
+		}
+		else {
+			boneID = modelOwner->GetBoneMap()[boneName].id;
+		}
+		assert(boneID != -1);
+		auto weights = mesh->mBones[boneIndex]->mWeights;
+		int numWeights = mesh->mBones[boneIndex]->mNumWeights;
+
+		for (int weightIndex = 0; weightIndex < numWeights; weightIndex++)
 		{
-		case Model::PBR:
-			meshes[i]->LoadPBRMaterial(materialFileNames[i]);
-			meshes[i]->isPBR = true;
-			break;
-		case Model::PBRMask:
-			meshes[i]->LoadPBRMaskMaterial(materialFileNames[i]);
-			meshes[i]->isPBR = true;
-			break;
-		case Model::Specular:
-			meshes[i]->LoadSpecularMaterial(materialFileNames[i]);
-			break;
+			int vertexId = weights[weightIndex].mVertexId;
+			float weight = weights[weightIndex].mWeight;
+			assert(vertexId <= vertices.size());
+			SetVertexBoneData(vertices[vertexId], boneID, weight);
 		}
 	}
+	return vertices;
 }
-#pragma endregion
+
+

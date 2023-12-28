@@ -1,6 +1,7 @@
 #pragma once
 #include "Application.h"
 #include "Mesh.h"
+#include "Model.h"
 #include "Texture.h"
 #include "GameObject.h"
 class Scene;
