@@ -1,4 +1,5 @@
 #include "Bone.h"
+#include <gtx/quaternion.hpp>
 
 float Bone::GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
 {
@@ -25,7 +26,7 @@ glm::mat4 Bone::InterpolateRotation(float animationTime)
 	if (1 == numRotations)
 	{
 		auto rotation = glm::normalize(rotations[0].rotation);
-		return glm::mat4(rotation);
+		return glm::toMat4(rotation);
 	}
 
 	int p0Index = GetRotationIndex(animationTime);
@@ -35,7 +36,7 @@ glm::mat4 Bone::InterpolateRotation(float animationTime)
 	glm::quat finalRotation = glm::slerp(rotations[p0Index].rotation,
 		rotations[p1Index].rotation, scaleFactor);
 	finalRotation = glm::normalize(finalRotation);
-	return glm::mat4(finalRotation);
+	return glm::toMat4(finalRotation);
 }
 
 glm::mat4 Bone::InterpolateScale(float animationTime)

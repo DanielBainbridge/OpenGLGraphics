@@ -62,14 +62,12 @@ MeshLoading::MeshLoading() {
 
 	Model* spider = new Model();
 	spider->shaderType == Model::ShaderType::PBRMask;
-	spider->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx", true);
+	spider->InitialiseModelFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx", true);
 	GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
 	spiderInstance->SetPosition({ 0, 0, 0 });
 	spiderInstance->SetScale(glm::vec3(1, 1, 1));
 	scene->AddGameObject(spiderInstance);
 	spiderInstance->name = "Spider";
-
-	spider->GetAnimator()->PlayAnimation(spider->GetAnimations()[0]);
 
 	//Model* mite = new Model();
 	//mite->shaderType == Model::ShaderType::PBRMask;
@@ -80,14 +78,14 @@ MeshLoading::MeshLoading() {
 	//scene->AddGameObject(miteInstance);
 	//miteInstance->name = "Mite";
 
-	//Model* slug = new Model();
-	//slug->shaderType == Model::ShaderType::PBRMask;
-	//slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx");
-	//GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
-	//slugInstance->SetPosition({ 0, 0, 0 });
-	//slugInstance->SetScale(glm::vec3(1, 1, 1));
-	//scene->AddGameObject(slugInstance);
-	//slugInstance->name = "Slug";
+	/*Model* slug = new Model();
+	slug->shaderType == Model::ShaderType::PBRMask;
+	slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx", true);
+	GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
+	slugInstance->SetPosition({ 0, 0, 0 });
+	slugInstance->SetScale(glm::vec3(1, 1, 1));
+	scene->AddGameObject(slugInstance);
+	slugInstance->name = "Slug";*/
 
 
 	//Model* wasp = new Model();

@@ -20,19 +20,18 @@ out vec4 _Position;
 out vec2 _TexCoords;
 out vec3 _Tangent;
 out vec3 _BiTangent;
-
+flat out ivec4 _BoneID;
+out vec4 _Weights;
 
 void main()
 {
 	vec4 posTransformed = vec4(0.0f);
-    mat4 boneTransform = (FinalBonesMatrices[BoneID[0]] * Weights[0]);
+	mat4 boneTransform = (FinalBonesMatrices[BoneID[0]] * Weights[0]);
 	boneTransform += (FinalBonesMatrices[BoneID[1]] * Weights[1]);
 	boneTransform += (FinalBonesMatrices[BoneID[2]] * Weights[2]);
 	boneTransform += (FinalBonesMatrices[BoneID[3]] * Weights[3]);
-	
-	
+		
 	posTransformed = boneTransform * Position;
-	
 
 
 	_Position = ModelMatrix * posTransformed;
@@ -40,5 +39,8 @@ void main()
 	_TexCoords = TexCoords;
 	_Tangent = (ModelMatrix * vec4(Tangent.xyz,0)).xyz;
 	_BiTangent = cross(_Normal, _Tangent) * Tangent.w;
-	gl_Position = ProjectionMatrix * _Position;
+	_BoneID = BoneID;
+	_Weights = Weights;
+	
+	gl_Position = ProjectionMatrix * posTransformed;
 }

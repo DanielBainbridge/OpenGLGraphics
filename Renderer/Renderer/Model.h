@@ -32,6 +32,11 @@ public:
 	void LoadMaterials();
 	Animator* GetAnimator() { return animator; }
 	std::vector<Animation*> GetAnimations() { return animations; }
+
+
+	auto& GetBoneMap() { return boneMap; };
+	int& GetBoneCount() { return boneCounter; };
+	
 private:
 	std::vector<Mesh*> meshes;
 	Animator* animator;
@@ -39,4 +44,8 @@ private:
 	std::vector<std::string> materialFileNames;
 	bool skinnedMesh = false;
 
+	std::map<std::string, Mesh::BoneInfo> boneMap;
+	int boneCounter = 0;
+
+	void ReadAnimations(const aiScene* scene, Model* model);
 };

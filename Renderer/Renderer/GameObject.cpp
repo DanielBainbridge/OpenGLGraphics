@@ -88,6 +88,8 @@ void GameObject::Draw(Scene* scene)
 	shader->bindUniform("PointLightPosition", numLights, scene->GetPointLightPositions());
 	shader->bindUniform("PointLightColour", numLights, scene->GetPointLightColours());
 
+	shader->bindUniform("DisplayBoneIndex", displayBoneIndex);
+
 	model->Draw(shader);
 }
 
@@ -97,6 +99,12 @@ void GameObject::DrawIMGUI()
 	//do stuff inside this window
 	ImGui::Begin((name + " Object").c_str());
 	ImGui::PushID((name + " Object").c_str());
+
+	auto newSelectedAnimation = currentAnimationNumber;
+	if (ImGui::DragInt("Selected Animation", &newSelectedAnimation, 1, 0, model->GetAnimations().size() - 1, 0, 0)) {
+		currentAnimationNumber = newSelectedAnimation;
+		model->GetAnimator()->SetCurrentAnimation(model->GetAnimations()[currentAnimationNumber]);
+	}
 
 	//transform information position, rotation, scale
 
@@ -121,6 +129,10 @@ void GameObject::DrawIMGUI()
 	//drop down of all models
 
 	if (ImGui::CollapsingHeader("Model Meshes")) {
+		auto newSelectedBone = displayBoneIndex;
+		if (ImGui::DragInt("Selected Bone", &newSelectedBone, 1, 0, 30, 0, 1.0f)) {
+			displayBoneIndex = newSelectedBone;
+		}
 
 		if (ImGui::Button("Load Materials")) {
 			model->LoadMaterials();

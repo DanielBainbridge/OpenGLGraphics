@@ -7,6 +7,8 @@ in vec4 _Position;
 in vec3 _Normal;
 in vec3 _Tangent;
 in vec3 _BiTangent;
+flat in  ivec4 _BoneID;
+in vec4 _Weights;
 
 
 uniform int numLights;
@@ -36,6 +38,8 @@ uniform sampler2D albedoMap;
 uniform sampler2D normalMap;
 uniform sampler2D maskMap;
 uniform sampler2D emissiveMap;
+
+uniform int DisplayBoneIndex;
 
 
 const float PI = 3.14159265359;

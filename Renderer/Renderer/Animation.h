@@ -19,7 +19,7 @@ struct AssimpNodeData {
 class Animation {
 public:
 	Animation() = default;
-	Animation(const std::string& animationPath, Mesh* mesh);
+	Animation(const aiScene* scene, Model* model, int animationPos);
 	~Animation() {}
 
 	Bone* FindBone(const std::string& name);
@@ -35,10 +35,10 @@ private:
 	AssimpNodeData rootNode;
 	std::map<std::string, Mesh::BoneInfo> boneInfoMap;
 
-	void ReadMissingBones(const aiAnimation* animation, Mesh& mesh);
+	void ReadMissingBones(const aiAnimation* animation, Model& model);
 	void ReadHeirarchyData(AssimpNodeData& destination, const aiNode* src);
 
-	
+
 
 };
 

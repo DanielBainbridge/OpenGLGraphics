@@ -24,4 +24,6 @@ public:
 protected:
 	glm::mat4 transform;
 	glm::vec3 position, rotation, scale;
+	int displayBoneIndex = 0;
+	int currentAnimationNumber = 0;
 };
