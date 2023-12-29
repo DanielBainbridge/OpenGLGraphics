@@ -102,8 +102,11 @@ void GameObject::DrawIMGUI()
 
 	auto newSelectedAnimation = currentAnimationNumber;
 	if (ImGui::DragInt("Selected Animation", &newSelectedAnimation, 1, 0, model->GetAnimations().size() - 1, 0, 0)) {
-		currentAnimationNumber = newSelectedAnimation;
-		model->GetAnimator()->SetCurrentAnimation(model->GetAnimations()[currentAnimationNumber]);
+		if (newSelectedAnimation < model->GetAnimations().size())
+		{
+			currentAnimationNumber = newSelectedAnimation;
+			model->GetAnimator()->SetCurrentAnimation(model->GetAnimations()[currentAnimationNumber]);
+		}
 	}
 
 	//transform information position, rotation, scale
@@ -111,7 +114,7 @@ void GameObject::DrawIMGUI()
 	if (ImGui::CollapsingHeader("Game Object Transform")) {
 		ImGui::Indent();
 		auto guiPosition = position;
-		if (ImGui::DragFloat3("Game Object Position", &guiPosition[0], 1, -10000000, 10000000, "%0.2f", 1.0f)) {
+		if (ImGui::DragFloat3("Game Object Position", &guiPosition[0], 0.5f, -10000000, 10000000, "%0.2f", 1.0f)) {
 			SetPosition(guiPosition);
 		}
 		auto guiRotation = rotation;
@@ -129,10 +132,6 @@ void GameObject::DrawIMGUI()
 	//drop down of all models
 
 	if (ImGui::CollapsingHeader("Model Meshes")) {
-		auto newSelectedBone = displayBoneIndex;
-		if (ImGui::DragInt("Selected Bone", &newSelectedBone, 1, 0, 30, 0, 1.0f)) {
-			displayBoneIndex = newSelectedBone;
-		}
 
 		if (ImGui::Button("Load Materials")) {
 			model->LoadMaterials();

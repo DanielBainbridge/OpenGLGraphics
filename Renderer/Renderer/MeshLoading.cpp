@@ -60,44 +60,44 @@ MeshLoading::MeshLoading() {
 
 #pragma region PBRMeshes
 
-	Model* spider = new Model();
-	spider->shaderType == Model::ShaderType::PBRMask;
-	spider->InitialiseModelFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx", true);
-	GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
-	spiderInstance->SetPosition({ 0, 0, 0 });
-	spiderInstance->SetScale(glm::vec3(1, 1, 1));
-	scene->AddGameObject(spiderInstance);
-	spiderInstance->name = "Spider";
+	//Model* spider = new Model();
+	//spider->shaderType == Model::ShaderType::PBRMask;
+	//spider->InitialiseModelFromFile("Meshes\\PBR\\Spider\\Animations\\MESH_CHA_BigSpider.fbx", true);
+	//GameObject* spiderInstance = new GameObject(spider->GetMeshes()[0]->quadTransform, spider, &this->PBRShader);
+	//spiderInstance->SetPosition({ 0, 0, 0 });
+	//spiderInstance->SetScale(glm::vec3(1, 1, 1));
+	//scene->AddGameObject(spiderInstance);
+	//spiderInstance->name = "Spider";
 
 	//Model* mite = new Model();
 	//mite->shaderType == Model::ShaderType::PBRMask;
-	//mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx");
+	//mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx", true);
 	//GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
 	//miteInstance->SetPosition({ 0, 0, 0 });
 	//miteInstance->SetScale(glm::vec3(1, 1, 1));
 	//scene->AddGameObject(miteInstance);
 	//miteInstance->name = "Mite";
 
-	/*Model* slug = new Model();
+	Model* slug = new Model();
 	slug->shaderType == Model::ShaderType::PBRMask;
 	slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx", true);
 	GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
 	slugInstance->SetPosition({ 0, 0, 0 });
 	slugInstance->SetScale(glm::vec3(1, 1, 1));
 	scene->AddGameObject(slugInstance);
-	slugInstance->name = "Slug";*/
+	slugInstance->name = "Slug";
 
 
 	//Model* wasp = new Model();
 	//wasp->shaderType == Model::ShaderType::PBRMask;
-	//wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx");
+	//wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx", true);
 	//GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
 	//waspInstance->SetPosition({ 0, 0, 0 });
 	//waspInstance->SetScale(glm::vec3(1, 1, 1));
 	//scene->AddGameObject(waspInstance);
 	//waspInstance->name = "Wasp";
 
-	SetCurrentGameObject(spiderInstance);
+	//SetCurrentGameObject(spiderInstance);
 
 #pragma endregion
 
@@ -126,8 +126,8 @@ MeshLoading::MeshLoading() {
 	scene->GetDirectionalLight()->SetColour({ 1 ,1 ,1 }, 1);
 	scene->SetAmbientLight({ 0.75f, 0.75f, 0.75f });
 
-	Light* redLight = new Light({ 600,300,0 }, { 1,0,0 }, 50000000);
-	Light* blueLight = new Light({ -650,100, 0 }, { 1,0,1 }, 50000000);
+	Light* redLight = new Light({ 600,300,0 }, { 1,0,0 }, 5000000);
+	Light* blueLight = new Light({ -650,100, 0 }, { 1,0,1 }, 5000000);
 
 	scene->AddPointLight(redLight);
 	scene->AddPointLight(blueLight);
@@ -147,13 +147,23 @@ void MeshLoading::Update() {
 
 	//do imgui buttons
 
+	auto tempCameraSpeed = scene->GetCamera()->GetMoveSpeed();
+	if (ImGui::DragFloat("Camera Move Speed", &tempCameraSpeed, 1, 0.5f, 200, "%.1f", 1.0f)) {
+		scene->GetCamera()->SetMoveSpeed(tempCameraSpeed);
+	}
+
+	auto tempCameraTurnSpeed = scene->GetCamera()->GetTurnSpeed();
+	if (ImGui::DragFloat("Camera Turn Speed", &tempCameraTurnSpeed, 0.005f, 0.001f, 0.5f, "%.1f", 1.0f)) {
+		scene->GetCamera()->SetTurnSpeed(tempCameraTurnSpeed);
+	}
+
 	auto tempPos = scene->GetPointLights()[0]->GetDirection();
 	if (ImGui::DragFloat3("Light 1 Position (XYZ)", &tempPos[0])) {
 		scene->GetPointLights()[0]->SetDirection(tempPos);
 	}
 	auto tempColour = scene->GetPointLights()[0]->GetRawColour();
 	if (ImGui::DragFloat3("Light 1 Colour", &tempColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
-		scene->GetPointLights()[0]->SetColour(tempColour, 500000000);
+		scene->GetPointLights()[0]->SetColour(tempColour, 50000);
 	}
 
 	auto tempPos2 = scene->GetPointLights()[1]->GetDirection();
@@ -162,7 +172,7 @@ void MeshLoading::Update() {
 	}
 	auto tempColour2 = scene->GetPointLights()[1]->GetRawColour();
 	if (ImGui::DragFloat3("Light 2 Colour", &tempColour2[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
-		scene->GetPointLights()[1]->SetColour(tempColour2, 500000000);
+		scene->GetPointLights()[1]->SetColour(tempColour2, 50000);
 	}
 
 	auto directionalLightSpeedMultiplier = directionalLightSpeed;
@@ -202,11 +212,8 @@ void MeshLoading::Update() {
 		scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(1), 0.75f, (float)cos(0))));
 	}
 
-	currentSelectedGameObject->DrawIMGUI();
+	//currentSelectedGameObject->DrawIMGUI();
 
-
-	//render imgui
-	ImGui::Render();
 
 	//update directional light direction
 	//float time = glfwGetTime();
@@ -214,7 +221,12 @@ void MeshLoading::Update() {
 	for (int i = 0; i < scene->GameObjectCount(); i++)
 	{
 		scene->GetGameObject(i)->Update(GetDeltaTime());
+		scene->GetGameObject(i)->DrawIMGUI();
 	}
+
+
+	//render imgui
+	ImGui::Render();
 }
 void MeshLoading::Draw() {
 	//draw scene

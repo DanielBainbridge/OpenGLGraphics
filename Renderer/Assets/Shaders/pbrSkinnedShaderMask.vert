@@ -30,12 +30,18 @@ void main()
 	boneTransform += (FinalBonesMatrices[BoneID[1]] * Weights[1]);
 	boneTransform += (FinalBonesMatrices[BoneID[2]] * Weights[2]);
 	boneTransform += (FinalBonesMatrices[BoneID[3]] * Weights[3]);
-		
+	
+	mat4 boneNormal = boneTransform;
+	boneNormal[3][0] = 0;
+	boneNormal[3][1] = 0;
+	boneNormal[3][2] = 0;
+	boneNormal[3][3] = 0;
+	
 	posTransformed = boneTransform * Position;
-
+	vec4 posNormal = boneNormal * Normal;
 
 	_Position = ModelMatrix * posTransformed;
-	_Normal = (ModelMatrix * Normal).xyz;
+	_Normal = (ModelMatrix * posNormal).xyz;
 	_TexCoords = TexCoords;
 	_Tangent = (ModelMatrix * vec4(Tangent.xyz,0)).xyz;
 	_BiTangent = cross(_Normal, _Tangent) * Tangent.w;

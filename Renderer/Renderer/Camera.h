@@ -7,6 +7,8 @@ public:
 	void UpdateCamera(float deltaTime, GLFWwindow* window);
 	glm::mat4 GetViewMatrix();
 	glm::mat4 GetProjectionMatrix(float width, float height);
+	float GetTurnSpeed() { return turnSpeed; }
+	float GetMoveSpeed() { return moveSpeed; }
 	inline void SetNearClip(float value) { nearClipPlane = value; };
 	inline void SetFarClip(float value) {farClipPlane = value;};
 	inline void SetFieldOfView(float value) {fieldOfView = value;};

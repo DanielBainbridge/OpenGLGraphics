@@ -581,24 +581,7 @@ void Mesh::CalculateTangents(std::vector<Vertex> vertices, unsigned int vertexCo
 
 std::vector<Mesh::Vertex> Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::Vertex> vertices, aiMesh* mesh)
 {
-	std::cout << "\n \n \n" << mesh->mName.C_Str() << std::endl;
-	for (int b = 0; b < mesh->mNumBones; b++)
-	{
-		glm::mat4 boneOffset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(mesh->mBones[b]->mOffsetMatrix);
-		std::cout << "Bone Name: " << mesh->mBones[b]->mName.C_Str() << std::endl;
-		for (int i = 0; i < 4; i++)
-		{			
-				std::cout << "\t";
-			for (int j = 0; j < 4; j++)
-			{
-				std::cout << boneOffset[i][j] << ", ";
-			}
-			std::cout << std::endl;
-		}
-		;
-	}
-
-	for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
+		for (int boneIndex = 0; boneIndex < mesh->mNumBones; boneIndex++)
 	{
 		int boneID = -1;
 		std::string boneName = mesh->mBones[boneIndex]->mName.C_Str();
@@ -610,7 +593,6 @@ std::vector<Mesh::Vertex> Mesh::ExtractBoneWeightForVertices(std::vector<Mesh::V
 			modelOwner->GetBoneMap()[boneName] = newBone;
 			boneID = modelOwner->GetBoneCount();
 			modelOwner->GetBoneCount()++;
-			std::cout << "Bone Count = " << modelOwner->GetBoneCount() << std::endl;
 		}
 		else {
 			boneID = modelOwner->GetBoneMap()[boneName].id;
