@@ -39,6 +39,7 @@ void main()
 	
 	posTransformed = boneTransform * Position;
 	vec4 posNormal = boneNormal * Normal;
+	posNormal = normalize(posNormal);
 
 	_Position = ModelMatrix * posTransformed;
 	_Normal = (ModelMatrix * posNormal).xyz;

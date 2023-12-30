@@ -69,14 +69,14 @@ MeshLoading::MeshLoading() {
 	//scene->AddGameObject(spiderInstance);
 	//spiderInstance->name = "Spider";
 
-	//Model* mite = new Model();
-	//mite->shaderType == Model::ShaderType::PBRMask;
-	//mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx", true);
-	//GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
-	//miteInstance->SetPosition({ 0, 0, 0 });
-	//miteInstance->SetScale(glm::vec3(1, 1, 1));
-	//scene->AddGameObject(miteInstance);
-	//miteInstance->name = "Mite";
+	Model* mite = new Model();
+	mite->shaderType == Model::ShaderType::PBRMask;
+	mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx", true);
+	GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
+	miteInstance->SetPosition({ 0, 0, 0 });
+	miteInstance->SetScale(glm::vec3(1, 1, 1));
+	scene->AddGameObject(miteInstance);
+	miteInstance->name = "Mite";
 
 	Model* slug = new Model();
 	slug->shaderType == Model::ShaderType::PBRMask;
@@ -88,16 +88,15 @@ MeshLoading::MeshLoading() {
 	slugInstance->name = "Slug";
 
 
-	//Model* wasp = new Model();
-	//wasp->shaderType == Model::ShaderType::PBRMask;
-	//wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx", true);
-	//GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
-	//waspInstance->SetPosition({ 0, 0, 0 });
-	//waspInstance->SetScale(glm::vec3(1, 1, 1));
-	//scene->AddGameObject(waspInstance);
-	//waspInstance->name = "Wasp";
+	Model* wasp = new Model();
+	wasp->shaderType == Model::ShaderType::PBRMask;
+	wasp->InitialiseModelFromFile("Meshes\\PBR\\Wasp\\Animations\\MESH_CHA_Wasp.fbx", true);
+	GameObject* waspInstance = new GameObject(wasp->GetMeshes()[0]->quadTransform, wasp, &this->PBRShader);
+	waspInstance->SetPosition({ 0, 0, 0 });
+	waspInstance->SetScale(glm::vec3(1, 1, 1));
+	scene->AddGameObject(waspInstance);
+	waspInstance->name = "Wasp";
 
-	//SetCurrentGameObject(spiderInstance);
 
 #pragma endregion
 
@@ -118,9 +117,8 @@ MeshLoading::MeshLoading() {
 #pragma endregion
 
 	//camera setup
-	camera->SetPosition(glm::vec3(0, 500, 1000));
-	camera->SetRotation(-90, -10);
-	//camera->SetMoveSpeed(50);
+	camera->SetPosition(glm::vec3(0, 0, 10));
+	camera->SetRotation(-90, 0);
 
 	//light setup
 	scene->GetDirectionalLight()->SetColour({ 1 ,1 ,1 }, 1);

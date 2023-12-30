@@ -53,7 +53,7 @@ bool Application::StartUp() {
 
 	//setup camera
 	camera = new Camera(3.141592 / 6, 1.5f, 16000);
-	camera->SetPosition(glm::vec3(-750, 0, -750));
+	camera->SetPosition(glm::vec3(0, 0, 0));
 }
 
 bool Application::Run() {
