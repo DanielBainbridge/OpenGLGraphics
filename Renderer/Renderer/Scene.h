@@ -29,6 +29,8 @@ public:
 	void AddPointLight(Light* light);
 	void SetAmbientLight(glm::vec3 light) { ambientLight = light; };
 
+	void DrawIMGUI();
+
 
 protected:
 	Camera* camera;

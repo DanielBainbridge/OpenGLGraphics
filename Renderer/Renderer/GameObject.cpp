@@ -11,9 +11,10 @@
 
 GameObject::GameObject(glm::mat4 transform, Model* model, ShaderProgram* shaderProgram)
 {
-	this->transform = transform;
+	this->globalTransform = transform;
 	this->model = model;
 	shader = shaderProgram;
+	transformDirty = true;
 }
 
 void GameObject::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::vec3 scale)
@@ -21,42 +22,96 @@ void GameObject::SetTransform(glm::vec3 position, glm::vec3 eulerAngles, glm::ve
 	this->position = position;
 	this->rotation = eulerAngles;
 	this->scale = scale;
-
-	transform = glm::translate(glm::mat4(1), position)
-		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
-		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
-		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.x), glm::vec3(1, 0, 0))
-		* glm::scale(glm::mat4(1), scale);
+	if (parent == nullptr) {
+		globalTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	else {
+		localTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	SetDirtyTransform(true);
 }
 
 void GameObject::SetPosition(glm::vec3 position)
 {
 	this->position = position;
-	transform = glm::translate(glm::mat4(1), position)
-		* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
-		* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
-		* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
-		* glm::scale(glm::mat4(1), scale);
+	if (parent == nullptr) {
+		globalTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	else {
+		localTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	SetDirtyTransform(true);
 }
 
 void GameObject::SetRotationEuler(glm::vec3 eulerAngles)
 {
 	rotation = eulerAngles;
-	transform = glm::translate(glm::mat4(1), position)
-		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
-		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
-		* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.x), glm::vec3(1, 0, 0))
-		* glm::scale(glm::mat4(1), scale);
+	if (parent == nullptr) {
+		globalTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	else {
+		localTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(eulerAngles.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	SetDirtyTransform(true);
 }
 
 void GameObject::SetScale(glm::vec3 scale)
 {
 	this->scale = scale;
-	transform = glm::translate(glm::mat4(1), position)
-		* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
-		* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
-		* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
-		* glm::scale(glm::mat4(1), scale);
+	if (parent == nullptr) {
+		globalTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	else {
+		localTransform = glm::translate(glm::mat4(1), position)
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.z), glm::vec3(0, 0, 1))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.y), glm::vec3(0, 1, 0))
+			* glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0))
+			* glm::scale(glm::mat4(1), scale);
+	}
+	SetDirtyTransform(true);
+}
+
+void GameObject::AddChild(GameObject* gameObject)
+{
+	children.push_back(gameObject);
+}
+
+glm::mat4 GameObject::GetTransform()
+{
+	if (parent == nullptr || !transformDirty) {
+		return globalTransform;
+	}
+	globalTransform = parent->GetTransform() * localTransform;
+	transformDirty = false;
+	return globalTransform;
 }
 
 void GameObject::Update(float deltaTime)
@@ -71,11 +126,11 @@ void GameObject::Draw(Scene* scene)
 	//enable shader
 	shader->Enable();
 	//bind position
-	auto pvm = scene->GetCamera()->GetProjectionMatrix(scene->GetWindowSize().x, scene->GetWindowSize().y) * scene->GetCamera()->GetViewMatrix() * transform;
+	auto pvm = scene->GetCamera()->GetProjectionMatrix(scene->GetWindowSize().x, scene->GetWindowSize().y) * scene->GetCamera()->GetViewMatrix() * GetTransform();
 	shader->bindUniform("ProjectionMatrix", pvm);
 
 	//bind model
-	shader->bindUniform("ModelMatrix", transform);
+	shader->bindUniform("ModelMatrix", globalTransform);
 	//bind lighting
 	shader->bindUniform("AmbientColour", scene->GetAmbientLight());
 	shader->bindUniform("LightColour", scene->GetDirectionalLight()->GetColour());
@@ -210,4 +265,13 @@ void GameObject::DrawIMGUI()
 	ImGui::PopID();
 	ImGui::End();
 
+}
+
+void GameObject::SetAllChildrenDirty()
+{
+	for (GameObject* gO : children)
+	{
+		gO->SetDirtyTransform(true);
+		gO->SetAllChildrenDirty();
+	}
 }

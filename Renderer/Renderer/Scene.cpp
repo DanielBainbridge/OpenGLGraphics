@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Application.h"
 #include "Light.h"
+#include "IMGUI_include.h"
 
 Scene::Scene(Camera* camera, glm::vec2 windowSize, Light* light, glm::vec3 ambientLight)
 {
@@ -47,4 +48,18 @@ GameObject* Scene::GetGameObject(int location)
 void Scene::AddPointLight(Light* light)
 {
 	pointLights.push_back(light);
+}
+
+void Scene::DrawIMGUI()
+{
+	ImGui::Begin("Scene Heirarchy");
+	ImGui::PushID("Scene Heirarchy");
+
+	//Actually Write It Out You Fuckwit
+
+	
+
+
+	ImGui::PopID();
+	ImGui::End();
 }
