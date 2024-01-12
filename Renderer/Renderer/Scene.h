@@ -25,11 +25,13 @@ public:
 	glm::vec3* GetPointLightPositions() { return &pointLightPositions[0]; };
 	glm::vec3* GetPointLightColours() { return &pointLightColours[0]; };
 	std::vector<Light*> GetPointLights() { return pointLights; };
-
+	GameObject* GetCurrentGameObject() { return currentGameObject; };
+	void SetCurrentGameObject(GameObject* gameObject) { currentGameObject = gameObject; };
 	void AddPointLight(Light* light);
 	void SetAmbientLight(glm::vec3 light) { ambientLight = light; };
 
 	void DrawIMGUI();
+	void DrawCurrentSelectedObject();
 
 
 protected:
@@ -42,4 +44,5 @@ protected:
 
 	glm::vec3 ambientLight;
 	std::vector<GameObject*> gameObjects;
+	GameObject* currentGameObject;
 };

@@ -148,12 +148,36 @@ void GameObject::Draw(Scene* scene)
 	model->Draw(shader);
 }
 
-void GameObject::DrawIMGUI()
+void GameObject::DrawIMGUI(Scene* scene)
+{
+	if (!objectInUIHeirarchyDirty) {
+		return;
+	}
+	
+	if (ImGui::TreeNodeEx(name.c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick)) {
+		if (ImGui::IsItemClicked()) {
+			scene->SetCurrentGameObject(this);
+		}
+		
+		ImGui::Indent();
+		for (int i = 0; i < children.size(); i++)
+		{
+			children[i]->DrawIMGUI(scene);
+		}
+		ImGui::TreePop();
+		ImGui::Unindent();
+	}
+
+	
+	objectInUIHeirarchyDirty = false;
+}
+
+
+void GameObject::DrawIMGUIWindow()
 {
 
 	//do stuff inside this window
-	ImGui::Begin((name + " Object").c_str());
-	ImGui::PushID((name + " Object").c_str());
+
 
 	auto newSelectedAnimation = currentAnimationNumber;
 	if (ImGui::DragInt("Selected Animation", &newSelectedAnimation, 1, 0, model->GetAnimations().size() - 1, 0, 0)) {
@@ -262,8 +286,7 @@ void GameObject::DrawIMGUI()
 	//each mesh check if it is using PBR mask PBR or specular, have tiling and offset options and emission options for each.
 
 	//have hot reload game object button that loads model and such
-	ImGui::PopID();
-	ImGui::End();
+	
 
 }
 

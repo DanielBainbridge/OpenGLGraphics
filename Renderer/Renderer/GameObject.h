@@ -24,13 +24,15 @@ public:
 		if (gameObject != this) { transformDirty = true; parent = gameObject; gameObject->AddChild(this); }
 	}
 	void SetDirtyTransform(bool isDirty) { transformDirty = isDirty; if (children.size() > 0) { SetAllChildrenDirty(); } }
+	void SetDirtyUI(bool isDirty) { objectInUIHeirarchyDirty = isDirty; }
 	GameObject* GetParent() { return parent; }
 	std::vector<GameObject*> GetChildren() { return children; }
 	void AddChild(GameObject* gameObject);
 	glm::mat4 GetTransform();
 	void Update(float deltaTime);
 	void Draw(Scene* scene);
-	void DrawIMGUI();
+	void DrawIMGUI(Scene* scene);
+	void DrawIMGUIWindow();
 	std::string name;
 	ShaderProgram* shader;
 	Model* model = nullptr;
@@ -38,6 +40,7 @@ protected:
 	glm::mat4 globalTransform = glm::mat4(1);
 	glm::mat4 localTransform = glm::mat4(1);
 	bool transformDirty = true;
+	bool objectInUIHeirarchyDirty = true;
 	glm::vec3 position, rotation, scale;
 	int displayBoneIndex = 0;
 	int currentAnimationNumber = 0;
