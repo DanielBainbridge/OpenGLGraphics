@@ -1,11 +1,13 @@
 #pragma once
 #include "Graphics.h"
+#include "ImGuizmo.h"
 #define MAX_LIGHTS 4
 
 //forward declaration
 class Camera;
 class GameObject;
 class Light;
+
 
 class Scene {
 public:
@@ -32,6 +34,7 @@ public:
 
 	void DrawIMGUI();
 	void DrawCurrentSelectedObject();
+
 
 
 protected:

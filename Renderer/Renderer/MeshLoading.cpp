@@ -20,6 +20,7 @@ MeshLoading::MeshLoading() {
 	glm::vec3 ambientLight = { 0.75f,0.75f,0.75f };
 	scene = new Scene(camera, glm::vec2(GetWindowWidth(), GetWindowHeight()), light, ambientLight);
 
+
 #pragma region SpecularMeshes
 
 	////setup meshes
@@ -254,11 +255,10 @@ void MeshLoading::Update() {
 	//update directional light direction
 	//float time = glfwGetTime();
 	//scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(directionalLightSpeed), 0.5f, (float)cos(directionalLightSpeed))));
-	/*for (int i = 0; i < scene->GameObjectCount(); i++)
+	for (int i = 0; i < scene->GameObjectCount(); i++)
 	{
 		scene->GetGameObject(i)->Update(GetDeltaTime());
-		scene->GetGameObject(i)->DrawIMGUIWindow();
-	}*/
+	}
 
 
 	//render imgui

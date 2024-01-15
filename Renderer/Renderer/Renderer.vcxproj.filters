@@ -5,222 +5,267 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="glad">
-      <UniqueIdentifier>{5157a7c7-e4bd-4c27-bacd-d822f8e7081a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Tools">
-      <UniqueIdentifier>{82e1eedc-7597-41b7-9e1e-cfac82115c61}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ProgramEntry">
-      <UniqueIdentifier>{7ad3bd0b-0161-4ae9-99b4-b4bc0f13a877}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Applications">
       <UniqueIdentifier>{bd2c898b-67c3-4aa1-8c15-90f1c4b8e563}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{3e407648-f1e6-47ee-a4cc-4b0eba738405}</UniqueIdentifier>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{994593c1-c074-4860-acf1-65f67b0c30b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Scene">
+    <Filter Include="Engine\Tools">
+      <UniqueIdentifier>{82e1eedc-7597-41b7-9e1e-cfac82115c61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Scene">
       <UniqueIdentifier>{b80632a4-5199-48af-ab01-096433ddbf2d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Imgui">
+    <Filter Include="Engine\ProgramEntry">
+      <UniqueIdentifier>{7ad3bd0b-0161-4ae9-99b4-b4bc0f13a877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Model">
+      <UniqueIdentifier>{3e407648-f1e6-47ee-a4cc-4b0eba738405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Managers">
+      <UniqueIdentifier>{126a781b-6a96-4999-8031-45c5b52e79cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Imgui">
       <UniqueIdentifier>{e2e8d391-fe05-435c-8a34-4a4a047343bc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Managers">
-      <UniqueIdentifier>{126a781b-6a96-4999-8031-45c5b52e79cd}</UniqueIdentifier>
+    <Filter Include="Engine\glad">
+      <UniqueIdentifier>{5157a7c7-e4bd-4c27-bacd-d822f8e7081a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concepts">
+      <UniqueIdentifier>{37f824d3-a6fc-44a0-bf30-8958a70861eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Concepts\FloodFill">
+      <UniqueIdentifier>{19070ae3-595b-4bf7-a736-36863906fc54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Imguizmo">
+      <UniqueIdentifier>{5eccf60b-da0c-4f29-b9ce-1cf5b20f8713}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
-      <Filter>glad</Filter>
+      <Filter>Engine\glad</Filter>
     </ClCompile>
     <ClCompile Include="Main.cpp">
-      <Filter>ProgramEntry</Filter>
+      <Filter>Engine\ProgramEntry</Filter>
     </ClCompile>
     <ClCompile Include="Utility.cpp">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
     <ClCompile Include="ShaderProgram.cpp">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
     <ClCompile Include="Mesh.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
-      <Filter>ProgramEntry</Filter>
+      <Filter>Engine\ProgramEntry</Filter>
     </ClCompile>
     <ClCompile Include="Gizmos.cpp">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
     <ClCompile Include="GLFWCallbacks.cpp">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClCompile>
     <ClCompile Include="MeshLoading.cpp">
       <Filter>Applications</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="Light.cpp">
-      <Filter>Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_demo.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_draw.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_glfw.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_opengl3.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_tables.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="imgui_widgets.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="MeshManager.cpp">
-      <Filter>Managers</Filter>
+      <Filter>Engine\Managers</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
-      <Filter>Managers</Filter>
+      <Filter>Engine\Managers</Filter>
     </ClCompile>
     <ClCompile Include="imgui_stdlib.cpp">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClCompile>
     <ClCompile Include="Model.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Bone.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Animation.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClCompile>
     <ClCompile Include="Animator.cpp">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ImCurveEdit.cpp">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGradient.cpp">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuizmo.cpp">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="ImSequencer.cpp">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphEditor.cpp">
+      <Filter>Engine\Imguizmo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
-      <Filter>glad</Filter>
+      <Filter>Engine\glad</Filter>
     </ClInclude>
     <ClInclude Include="khrplatform.h">
-      <Filter>glad</Filter>
+      <Filter>Engine\glad</Filter>
     </ClInclude>
     <ClInclude Include="Utility.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="ShaderProgram.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
-      <Filter>Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
-      <Filter>ProgramEntry</Filter>
+      <Filter>Engine\ProgramEntry</Filter>
     </ClInclude>
     <ClInclude Include="Gizmos.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="MeshLoading.h">
       <Filter>Applications</Filter>
     </ClInclude>
     <ClInclude Include="GLFWCallbacks.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Texture.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="stb_image.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="GameObject.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
-      <Filter>Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
-      <Filter>Scene</Filter>
+      <Filter>Engine\Scene</Filter>
     </ClInclude>
     <ClInclude Include="IMGUI_include.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="dirent.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_glfw.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_opengl3.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_opengl3_loader.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imgui_internal.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imstb_rectpack.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imstb_textedit.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="imstb_truetype.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
-      <Filter>Managers</Filter>
+      <Filter>Engine\Managers</Filter>
     </ClInclude>
     <ClInclude Include="MeshManager.h">
-      <Filter>Managers</Filter>
+      <Filter>Engine\Managers</Filter>
     </ClInclude>
     <ClInclude Include="imgui_stdlib.h">
-      <Filter>Imgui</Filter>
+      <Filter>Engine\Imgui</Filter>
     </ClInclude>
     <ClInclude Include="assimp_glm_helpers.h">
-      <Filter>Tools</Filter>
+      <Filter>Engine\Tools</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Bone.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Animation.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
     </ClInclude>
     <ClInclude Include="Animator.h">
-      <Filter>Model</Filter>
+      <Filter>Engine\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="ImCurveEdit.h">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGradient.h">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuizmo.h">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="ImSequencer.h">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="ImZoomSlider.h">
+      <Filter>Engine\Imguizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphEditor.h">
+      <Filter>Engine\Imguizmo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
