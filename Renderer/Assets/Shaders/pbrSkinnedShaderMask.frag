@@ -1,7 +1,7 @@
 #version 460
 
-out vec4 FragColor;
-out vec4 Emission;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 Emission;
 in vec2 _TexCoords;
 in vec4 _Position;
 in vec3 _Normal;
@@ -9,6 +9,7 @@ in vec3 _Tangent;
 in vec3 _BiTangent;
 flat in  ivec4 _BoneID;
 in vec4 _Weights;
+
 
 
 uniform int numLights;

@@ -127,21 +127,6 @@
     <ClCompile Include="Animator.cpp">
       <Filter>Engine\Model</Filter>
     </ClCompile>
-    <ClCompile Include="ImCurveEdit.cpp">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGradient.cpp">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="ImGuizmo.cpp">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="ImSequencer.cpp">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClCompile>
-    <ClCompile Include="GraphEditor.cpp">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="glad.h">
@@ -248,24 +233,6 @@
     </ClInclude>
     <ClInclude Include="Animator.h">
       <Filter>Engine\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="ImCurveEdit.h">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGradient.h">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuizmo.h">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="ImSequencer.h">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="ImZoomSlider.h">
-      <Filter>Engine\Imguizmo</Filter>
-    </ClInclude>
-    <ClInclude Include="GraphEditor.h">
-      <Filter>Engine\Imguizmo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -25,13 +25,15 @@ public:
 	Camera* camera;
 	ShaderProgram phongShader;
 	ShaderProgram PBRShader;
+	ShaderProgram screenShader;
 
 protected:
 
 	static Application* s_instance;
 	GLFWwindow* window;
 	std::string windowName = "Window";
-	int windowWidth = 1280, windowHeight = 720;
+	int windowWidth = (int)(1920 * 0.75f), windowHeight = (int)(1080 * 0.75f);
+
 	glm::vec2 mousePosition;
 
 
@@ -39,5 +41,10 @@ private:
 	float deltaTime = 0;
 	float lastTime = 0;
 	glm::vec2 lastMousePosition;
-	GLuint bufferID;
+	unsigned int bufferID;
+	unsigned int renderbufferObject;
+
+	unsigned int texture;
+
+	unsigned int textureQuadVAO, textureQuadVBO;
 };

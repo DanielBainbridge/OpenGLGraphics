@@ -1,6 +1,5 @@
 #pragma once
 #include "Graphics.h"
-#include "ImGuizmo.h"
 #define MAX_LIGHTS 4
 
 //forward declaration

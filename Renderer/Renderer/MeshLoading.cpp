@@ -83,7 +83,7 @@ MeshLoading::MeshLoading() {
 		{
 			slugInstance->SetParent(scene->GetGameObject(i - 1));
 		}
-		slugInstance->SetPosition({ 0, i * (25), 0 });
+		slugInstance->SetPosition({ 0, 0, i });
 		slugInstance->SetScale(glm::vec3(1, 1, 1));
 		scene->AddGameObject(slugInstance);
 		slugInstance->name = "Slug " + std::to_string(i + 1);
@@ -100,7 +100,7 @@ MeshLoading::MeshLoading() {
 			{
 				miteInstance->SetParent(scene->GetGameObject(scene->GetGameObjects().size() - 1));
 			}
-			miteInstance->SetPosition({ j * 30, 0, i * 25 });
+			miteInstance->SetPosition({ j, 0, i });
 			miteInstance->SetScale(glm::vec3(1, 1, 1));
 			scene->AddGameObject(miteInstance);
 			miteInstance->name = "Mite" + std::to_string(miteCount);
