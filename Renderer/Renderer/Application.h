@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "ShaderProgram.h"
 class Camera;
+class Texture;
 class Application {
 public:
 
@@ -12,6 +13,7 @@ public:
 	void ShutDown();
 	virtual void Update() = 0;
 	virtual void Draw() = 0;
+	virtual void DrawIMGUI() = 0;
 
 
 	static Application* get() { return s_instance; };
@@ -43,8 +45,7 @@ private:
 	glm::vec2 lastMousePosition;
 	unsigned int bufferID;
 	unsigned int renderbufferObject;
-
-	unsigned int texture;
-
+	
+	Texture* texture;
 	unsigned int textureQuadVAO, textureQuadVBO;
 };

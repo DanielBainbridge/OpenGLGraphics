@@ -73,24 +73,18 @@ MeshLoading::MeshLoading() {
 
 
 
-	for (int i = 0; i < 5; i++)
-	{
 		Model* slug = new Model();
 		slug->shaderType == Model::ShaderType::PBRMask;
 		slug->InitialiseModelFromFile("Meshes\\PBR\\Slug\\Animations\\MESH_CHA_Worm.fbx", true);
 		GameObject* slugInstance = new GameObject(slug->GetMeshes()[0]->quadTransform, slug, &this->PBRShader);
-		if (i != 0)
-		{
-			slugInstance->SetParent(scene->GetGameObject(i - 1));
-		}
-		slugInstance->SetPosition({ 0, 0, i });
+		slugInstance->SetPosition({ 0, 0, 0 });
 		slugInstance->SetScale(glm::vec3(1, 1, 1));
 		scene->AddGameObject(slugInstance);
-		slugInstance->name = "Slug " + std::to_string(i + 1);
-	}
+		slugInstance->name = "Slug " + std::to_string(0 + 1);
+	
 	int miteCount = 1;
-	for (int j = 0; j < 4; j++) {
-		for (int i = 0; i < 3; i++)
+	for (int j = 0; j < 2; j++) {
+		for (int i = 0; i < 2; i++)
 		{
 			Model* mite = new Model();
 			mite->shaderType == Model::ShaderType::PBRMask;
@@ -161,6 +155,22 @@ MeshLoading::~MeshLoading()
 }
 
 void MeshLoading::Update() {
+	
+	//update directional light direction
+	for (int i = 0; i < scene->GameObjectCount(); i++)
+	{
+		scene->GetGameObject(i)->Update(GetDeltaTime());
+	}
+
+}
+void MeshLoading::Draw() {
+	//draw scene
+	scene->Draw();	
+}
+
+void MeshLoading::DrawIMGUI()
+{
+	//draw imgui
 	//start imgui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -245,29 +255,11 @@ void MeshLoading::Update() {
 		scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(1), 0.75f, (float)cos(0))));
 	}
 
-
 	scene->DrawIMGUI();
-	//ImGui::ShowDemoWindow();
+
 	scene->DrawCurrentSelectedObject();
-
-
-
-	//update directional light direction
-	//float time = glfwGetTime();
-	//scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(directionalLightSpeed), 0.5f, (float)cos(directionalLightSpeed))));
-	for (int i = 0; i < scene->GameObjectCount(); i++)
-	{
-		scene->GetGameObject(i)->Update(GetDeltaTime());
-	}
-
-
-	//render imgui
 	ImGui::Render();
-}
-void MeshLoading::Draw() {
-	//draw scene
-	scene->Draw();
-	//draw imgui
+
 	if (ImGui::GetDrawData()) {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	}

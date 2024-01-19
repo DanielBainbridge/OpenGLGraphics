@@ -12,6 +12,7 @@ public:
 	~MeshLoading();
 	virtual void Update() override;
 	virtual void Draw() override;
+	virtual void DrawIMGUI() override;
 private:
 	Scene* scene;
 	bool depthTestEnable = true;

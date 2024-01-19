@@ -40,6 +40,18 @@ void Texture::LoadFromFile(std::string filename)
 	loadedProperly = true;
 }
 
+void Texture::CreateScreenSpaceTexture(int windowWidth, int windowHeight)
+{
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, windowWidth, windowHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+}
+
+
+
 void Texture::Bind(int textureUnit) const
 {
 	glActiveTexture(GL_TEXTURE0 + textureUnit);

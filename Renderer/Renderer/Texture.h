@@ -7,6 +7,7 @@ public:
 	~Texture();
 
 	void LoadFromFile(std::string filename);
+	void CreateScreenSpaceTexture(int windowWidth, int windowHeight);
 	Texture(const Texture& other) = delete;
 	Texture& operator=(const Texture& other) = delete;
 	void Bind(int textureUnit = 0) const;

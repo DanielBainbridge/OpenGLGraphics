@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "GLFWCallbacks.h"
 #include <iostream>
+#include "Texture.h"
 
 Application::Application() {
 	StartUp();
@@ -40,13 +41,14 @@ bool Application::StartUp() {
 
 	//set up screenspace quad
 	float quadVertices[] = {
-		0.0f, 1.0f, 0.0f, 1.0f,
-		0.0f, 0.0f, 0.0f, 0.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
 
-		0.0f, 1.0f, 0.0f, 1.0f,
-		1.0f, 0.0f, 1.0f, 0.0f,
-		1.0f, 1.0f, 1.0f, 1.0f
+		1.0f, -1.0f, 1.0f, 0.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		-1.0f,  1.0f,  0.0f, 1.0f,
+
+		 1.0f,  1.0f,  1.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		-1.0f,  1.0f,  0.0f, 1.0f
 	};
 	glGenBuffers(1, &textureQuadVBO);
 	glGenVertexArrays(1, &textureQuadVAO);
@@ -64,21 +66,23 @@ bool Application::StartUp() {
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
 
 	//create Texture
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, windowWidth, windowHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture, 0);
+	texture = new Texture();
+	texture->CreateScreenSpaceTexture(windowWidth, windowHeight);
+	
 
 	//create render buffer object
 	glGenRenderbuffers(1, &renderbufferObject);
 	glBindRenderbuffer(GL_RENDERBUFFER, renderbufferObject);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, windowWidth, windowHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject);
 
+	//check that the frame buffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+
+	//set back to main buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glEnableVertexAttribArray(0);
@@ -92,12 +96,6 @@ bool Application::StartUp() {
 	//glEnable(GL_STENCIL);
 	
 	glad_glClearColor(0.65f, 0.65f, 0.65f, 1);
-
-	
-
-	
-	
-
 	// draw as wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -146,10 +144,11 @@ void Application::Render()
 	//enable screenspace shader
 	screenShader.Enable();
 	glBindVertexArray(textureQuadVAO); //bind screen size quad
-	glBindTexture(GL_TEXTURE_2D, texture);
+	texture->Bind(1);
+	screenShader.bindUniform("screenTexture", 1);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
-
+	DrawIMGUI();
 	//swap window buffers and poll events
 	glfwSwapBuffers(window);
 	glfwPollEvents();
