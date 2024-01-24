@@ -35,9 +35,11 @@ bool Application::StartUp() {
 	phongShader.Enable();
 	PBRShader.LoadFromFiles("Shaders\\PBRSkinnedShaderMask.vert", "Shaders\\PBRSkinnedShaderMask.frag");
 	PBRShader.Enable();
-	screenShader.LoadFromFiles("Shaders\\renderBufferTest.vert", "Shaders\\renderBufferTest.frag");
+	screenShader.LoadFromFiles("Shaders\\hdrBloomBuffer.vert", "Shaders\\hdrBloomBuffer.frag");
 	screenShader.Enable();
 	screenShader.bindUniform("screenTexture", 0);
+	blurShader.LoadFromFiles("Shaders\\blurImageShader.vert", "Shaders\\blurImageShader.frag");
+
 
 	//set up screenspace quad
 	float quadVertices[] = {
@@ -62,8 +64,8 @@ bool Application::StartUp() {
 
 
 	//create frame buffer
-	glGenFramebuffers(1, &bufferID);
-	glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
+	glGenFramebuffers(2, bufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, bufferID[0]);
 
 	//create Texture
 	texture = new Texture();
@@ -84,6 +86,10 @@ bool Application::StartUp() {
 
 	//set back to main buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	bloomTexture = new Texture();
+	bloomTexture->CreateScreenSpacePingPongTexture(windowWidth, windowHeight, pingPongFBO);
+
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -127,12 +133,25 @@ bool Application::Run() {
 void Application::Render()
 {
 	//first pass draw the application
-	glBindFramebuffer(GL_FRAMEBUFFER, bufferID);
+	glBindFramebuffer(GL_FRAMEBUFFER, bufferID[0]);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//Virtual, In most cases, cursive, draws scene, draws scene models
 	Draw();
 
+	//bloom blur
+	bool horizontal = true, first_iteration = true;
+	unsigned int amount = 10;
+	blurShader.Enable();
+	for (unsigned int i = 0; i < amount; i++)
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, pingPongFBO[horizontal]);
+		blurShader.bindUniform("horizontal", horizontal);
+		bloomTexture->Bind(first_iteration ? bufferID[1] : bloomTexture->GetTextureID()[!horizontal]); // bind texture of other framebuffer (or scene if first iteration)
+		horizontal = !horizontal;
+		if (first_iteration)
+			first_iteration = false;
+	}
 
 	//bind back to default frame buffer
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -144,8 +163,11 @@ void Application::Render()
 	//enable screenspace shader
 	screenShader.Enable();
 	glBindVertexArray(textureQuadVAO); //bind screen size quad
-	texture->Bind(1);
+	texture->Bind(1,0);
 	screenShader.bindUniform("screenTexture", 1);
+	texture->Bind(2, 1);
+	screenShader.bindUniform("bloomBlur", 2);
+	screenShader.bindUniform("exposure", exposure);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	DrawIMGUI();

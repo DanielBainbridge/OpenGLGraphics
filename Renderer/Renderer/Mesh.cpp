@@ -481,6 +481,13 @@ void Mesh::LoadPBRMaterial(std::string filename)
 void Mesh::LoadPBRMaskMaterial(std::string filename)
 {
 	std::fstream file(filename.c_str(), std::ios::in);
+
+	if (!file)
+	{
+		std::cout << "There is no material file: " + filename << std::endl;
+		return;
+	}
+
 	std::string line;
 	std::string header;
 	char buffer[256];

@@ -28,6 +28,8 @@ public:
 	ShaderProgram phongShader;
 	ShaderProgram PBRShader;
 	ShaderProgram screenShader;
+	ShaderProgram blurShader;
+	ShaderProgram bloomShader;
 
 protected:
 
@@ -38,14 +40,19 @@ protected:
 
 	glm::vec2 mousePosition;
 
+	float exposure = 1.0f;
 
 private:
 	float deltaTime = 0;
 	float lastTime = 0;
 	glm::vec2 lastMousePosition;
-	unsigned int bufferID;
+	unsigned int bufferID[2];
 	unsigned int renderbufferObject;
 	
 	Texture* texture;
+	Texture* bloomTexture;
 	unsigned int textureQuadVAO, textureQuadVBO;
+
+	unsigned int pingPongFBO[2];
+	unsigned int pingPongColourBuffers[2];
 };

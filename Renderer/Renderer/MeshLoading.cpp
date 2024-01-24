@@ -82,25 +82,25 @@ MeshLoading::MeshLoading() {
 		scene->AddGameObject(slugInstance);
 		slugInstance->name = "Slug " + std::to_string(0 + 1);
 	
-	int miteCount = 1;
-	for (int j = 0; j < 2; j++) {
-		for (int i = 0; i < 2; i++)
-		{
-			Model* mite = new Model();
-			mite->shaderType == Model::ShaderType::PBRMask;
-			mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx", true);
-			GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
-			if (i != 0)
-			{
-				miteInstance->SetParent(scene->GetGameObject(scene->GetGameObjects().size() - 1));
-			}
-			miteInstance->SetPosition({ j, 0, i });
-			miteInstance->SetScale(glm::vec3(1, 1, 1));
-			scene->AddGameObject(miteInstance);
-			miteInstance->name = "Mite" + std::to_string(miteCount);
-			miteCount++;
-		}
-	}
+	//int miteCount = 1;
+	//for (int j = 0; j < 2; j++) {
+	//	for (int i = 0; i < 2; i++)
+	//	{
+	//		Model* mite = new Model();
+	//		mite->shaderType == Model::ShaderType::PBRMask;
+	//		mite->InitialiseModelFromFile("Meshes\\PBR\\Mite\\Animations\\MESH_CHA_Mite.fbx", true);
+	//		GameObject* miteInstance = new GameObject(mite->GetMeshes()[0]->quadTransform, mite, &this->PBRShader);
+	//		if (i != 0)
+	//		{
+	//			miteInstance->SetParent(scene->GetGameObject(scene->GetGameObjects().size() - 1));
+	//		}
+	//		miteInstance->SetPosition({ j, 0, i });
+	//		miteInstance->SetScale(glm::vec3(1, 1, 1));
+	//		scene->AddGameObject(miteInstance);
+	//		miteInstance->name = "Mite" + std::to_string(miteCount);
+	//		miteCount++;
+	//	}
+	//}
 
 
 
@@ -182,6 +182,10 @@ void MeshLoading::DrawIMGUI()
 	auto tempCameraSpeed = scene->GetCamera()->GetMoveSpeed();
 	if (ImGui::DragFloat("Camera Move Speed", &tempCameraSpeed, 1, 0.5f, 200, "%.1f", 1.0f)) {
 		scene->GetCamera()->SetMoveSpeed(tempCameraSpeed);
+	}
+	auto tempExposure = exposure;
+	if (ImGui::DragFloat("Exposure", &tempExposure, 1, 0.1f, 10, "%.1f", 1.0f)) {
+		exposure = tempExposure;
 	}
 
 	auto tempCameraTurnSpeed = scene->GetCamera()->GetTurnSpeed();
