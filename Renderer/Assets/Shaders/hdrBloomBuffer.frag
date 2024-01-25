@@ -10,7 +10,7 @@ uniform float exposure;
 
 void main()
 {             
-    const float gamma = 1.0f;
+    const float gamma = 2.2f;
     vec3 hdrColour = texture(screenTexture, TexCoords).rgb;
 	vec3 bloomColour = texture(bloomBlur, TexCoords).rgb;
   

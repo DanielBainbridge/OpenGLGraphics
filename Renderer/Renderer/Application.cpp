@@ -38,6 +38,7 @@ bool Application::StartUp() {
 	screenShader.LoadFromFiles("Shaders\\hdrBloomBuffer.vert", "Shaders\\hdrBloomBuffer.frag");
 	screenShader.Enable();
 	screenShader.bindUniform("screenTexture", 0);
+	screenShader.bindUniform("bloomBlur", 1);
 	blurShader.LoadFromFiles("Shaders\\blurImageShader.vert", "Shaders\\blurImageShader.frag");
 
 
@@ -70,6 +71,8 @@ bool Application::StartUp() {
 	//create Texture
 	texture = new Texture();
 	texture->CreateScreenSpaceTexture(windowWidth, windowHeight);
+
+
 	
 
 	//create render buffer object
@@ -79,7 +82,8 @@ bool Application::StartUp() {
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, renderbufferObject);
-
+	unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
+	glDrawBuffers(2, attachments);
 	//check that the frame buffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
@@ -101,7 +105,7 @@ bool Application::StartUp() {
 	glEnable(GL_CULL_FACE);
 	//glEnable(GL_STENCIL);
 	
-	glad_glClearColor(0.65f, 0.65f, 0.65f, 1);
+	glad_glClearColor(0.05f, 0.05f, 0.05f, 1);
 	// draw as wireframe
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -109,6 +113,7 @@ bool Application::StartUp() {
 	//setup camera
 	camera = new Camera(3.141592 / 6, 1.5f, 16000);
 	camera->SetPosition(glm::vec3(0, 0, 0));
+
 }
 
 bool Application::Run() {
@@ -136,18 +141,24 @@ void Application::Render()
 	glBindFramebuffer(GL_FRAMEBUFFER, bufferID[0]);
 	glEnable(GL_DEPTH_TEST);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//Virtual, In most cases, cursive, draws scene, draws scene models
+	//Virtual, In most cases, recursive, draws scene, draws scene models
 	Draw();
+
+	//scene rendererd bind back to 0
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	//bloom blur
 	bool horizontal = true, first_iteration = true;
-	unsigned int amount = 10;
+	unsigned int amount = 20;
 	blurShader.Enable();
 	for (unsigned int i = 0; i < amount; i++)
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, pingPongFBO[horizontal]);
 		blurShader.bindUniform("horizontal", horizontal);
-		bloomTexture->Bind(first_iteration ? bufferID[1] : bloomTexture->GetTextureID()[!horizontal]); // bind texture of other framebuffer (or scene if first iteration)
+		first_iteration ? texture->Bind(1, 1) : bloomTexture->Bind(1, !horizontal);	// bind texture of other framebuffer (or scene if first iteration)
+		blurShader.bindUniform("image", 1);
+		glBindVertexArray(textureQuadVAO);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 		horizontal = !horizontal;
 		if (first_iteration)
 			first_iteration = false;
@@ -158,16 +169,16 @@ void Application::Render()
 	//disable depth test to ensure nothing renders on top of quad
 	glDisable(GL_DEPTH_TEST);
 	//clear colour
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//enable screenspace shader
 	screenShader.Enable();
-	glBindVertexArray(textureQuadVAO); //bind screen size quad
 	texture->Bind(1,0);
 	screenShader.bindUniform("screenTexture", 1);
-	texture->Bind(2, 1);
+	bloomTexture->Bind(2,!horizontal);
 	screenShader.bindUniform("bloomBlur", 2);
 	screenShader.bindUniform("exposure", exposure);
+	glBindVertexArray(textureQuadVAO); //bind screen size quad
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	DrawIMGUI();
