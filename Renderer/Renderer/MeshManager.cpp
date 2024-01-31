@@ -6,23 +6,28 @@ namespace Managers {
 	
 	void MeshManager::FindAllMeshes()
 	{
-		for (auto directory : filesystem::recursive_directory_iterator("Assets\\Meshes")) {
+		for (auto directory : filesystem::recursive_directory_iterator("Meshes")) {
 			if (directory.path().extension() == ".fbx" || directory.path().extension() == ".obj") {
 				string newDirectory = directory.path().generic_string();
-				meshManager->allMeshes.push_back(newDirectory);
+				meshManager->allMeshes.try_emplace(newDirectory, new Model(newDirectory, true));
 			}
 		}
 	}
 	void MeshManager::DrawImgui()
 	{
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		ImGui::Begin("Mesh Manager");
+		ImGui::PushID("Mesh Manager");
+		if (ImGui::Button("Refresh Meshes"))
+		{
+			FindAllMeshes();
+		}
 
-		//do stuff inside this window
+		for (auto& [key, value] : meshManager->allMeshes) {
+			ImGui::Text(key.c_str());
+		}
 
-
-		ImGui::Render();
+		ImGui::PopID();
+		ImGui::End();
 	}
 
 	MeshManager* MeshManager::meshManager = nullptr;

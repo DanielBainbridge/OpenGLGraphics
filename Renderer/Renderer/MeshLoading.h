@@ -4,6 +4,8 @@
 #include "Model.h"
 #include "Texture.h"
 #include "GameObject.h"
+#include "TextureManager.h"
+#include "MeshManager.h"
 class Scene;
 class MeshLoading : public Application {
 public:
@@ -19,4 +21,6 @@ private:
 	float directionalLightSpeed = 1;
 	float directionalLightIntensity = 1;
 	GameObject* currentSelectedGameObject = nullptr;
+	Managers::TextureManager* texManager;
+	Managers::MeshManager* meshManager;
 };

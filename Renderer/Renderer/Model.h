@@ -20,7 +20,7 @@ public:
 	};
 
 	Model() {};
-	Model(Model& model);
+	Model(std::string filename, bool modelSkinned);
 	~Model();
 
 	std::vector<Mesh*> GetMeshes() { return meshes; };

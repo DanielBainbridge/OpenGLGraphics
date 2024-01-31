@@ -7,10 +7,11 @@
 #include "ShaderProgram.h"
 #include "assimp_glm_helpers.h"
 
-Model::Model(Model& model)
+Model::Model(std::string filename, bool modelSkinned)
 {
-
+	InitialiseModelFromFile(filename, modelSkinned);
 }
+
 
 void Model::Draw(ShaderProgram* shader)
 {

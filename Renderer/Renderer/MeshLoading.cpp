@@ -6,6 +6,8 @@
 #include <iostream>
 #include "Animation.h"
 #include "Animator.h"
+#include "TextureManager.h"
+#include "MeshManager.h"
 
 MeshLoading::MeshLoading() {
 
@@ -19,6 +21,12 @@ MeshLoading::MeshLoading() {
 	Light* light = new Light({ 1,1,1 }, { 0 ,0,0 }, 0);
 	glm::vec3 ambientLight = { 0.75f,0.75f,0.75f };
 	scene = new Scene(camera, glm::vec2(GetWindowWidth(), GetWindowHeight()), light, ambientLight);
+	
+	texManager = Managers::TextureManager::GetInstance();
+	meshManager = Managers::MeshManager::GetInstance();
+
+	meshManager->FindAllMeshes();
+	texManager->FindAllTextures();
 
 
 #pragma region SpecularMeshes
@@ -226,42 +234,23 @@ void MeshLoading::DrawIMGUI()
 	if (ImGui::DragFloat3("Directional Light Colour", &directionalLightColour[0], 0.01f, 0, 1, "%.2f", 1.0f)) {
 		scene->GetDirectionalLight()->SetColour(directionalLightColour, directionalLightIntensity);
 	}
-	if (scene->GetGameObjects().size() > 0) {
-
-		auto guiRotation = scene->GetGameObject(0)->GetRotation();
-		if (ImGui::DragFloat3("Game Object Rotation", &guiRotation[0], 0.5f, -180, 180, "%.2f", 1.0f)) {
-			for (GameObject* gO : scene->GetGameObjects())
-			{
-				gO->SetRotationEuler(guiRotation);
-			}
-
-		}
-	}
-
-	//enable disable depth test
-	if (ImGui::Button("Depth Test On/Off")) {
-		if (depthTestEnable) {
-			glDisable(GL_DEPTH_TEST);
-			depthTestEnable = false;
-		}
-		else {
-			glEnable(GL_DEPTH_TEST);
-			depthTestEnable = true;
-		}
-	}
 
 	//enable disable depth test
 	if (ImGui::Button("Light Set Up 1")) {
-		scene->GetPointLights()[0]->SetColour({ 1,1,1 }, 500000000);
-		scene->GetPointLights()[0]->SetDirection({ 1000,1000,1000 });
-		scene->GetPointLights()[1]->SetColour({ 0,0,0.5f }, 500000000);
-		scene->GetPointLights()[1]->SetDirection({ -1000,-1000,-1000 });
+		scene->GetPointLights()[0]->SetColour({ 1,1,1 }, 50000);
+		scene->GetPointLights()[0]->SetDirection({ 105,105,105 });
+		scene->GetPointLights()[1]->SetColour({ 0,0,0.5f }, 50000);
+		scene->GetPointLights()[1]->SetDirection({ -10,-10,-10 });
 		scene->GetDirectionalLight()->SetDirection(glm::normalize(glm::vec3((float)sin(1), 0.75f, (float)cos(0))));
 	}
 
 	scene->DrawIMGUI();
 
 	scene->DrawCurrentSelectedObject();
+
+	Managers::TextureManager::DrawImgui();
+	Managers::MeshManager::DrawImgui();
+
 	ImGui::Render();
 
 	if (ImGui::GetDrawData()) {
